@@ -1,0 +1,43 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Next.js ───────────────────────────────────────────────────────────────────
+.next/
+out/
+build/
+dist/
+
+# ── Environment ───────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── Prisma ────────────────────────────────────────────────────────────────────
+# Keep migrations in VCS; ignore generated client
+prisma/generated/
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+coverage/
+
+# ── OS / IDE ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── TypeScript ────────────────────────────────────────────────────────────────
+*.tsbuildinfo
+next-env.d.ts

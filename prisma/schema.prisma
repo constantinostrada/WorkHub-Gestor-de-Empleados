@@ -1,0 +1,63 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Prisma Schema — WorkHub Gestor de Empleados
+// ─────────────────────────────────────────────────────────────────────────────
+// NOTE: This file lives in infrastructure territory.
+//       ORM models NEVER leak into domain or application layers.
+//       The PrismaEmployeeRepository maps these models → domain entities.
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Department
+// ─────────────────────────────────────────────────────────────────────────────
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt       @map("updated_at")
+
+  employees   Employee[]
+
+  @@map("departments")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Employee
+// ─────────────────────────────────────────────────────────────────────────────
+model Employee {
+  id           String         @id @default(uuid())
+  firstName    String         @map("first_name")
+  lastName     String         @map("last_name")
+  email        String         @unique
+  phone        String?
+  position     String
+  salary       Decimal        @db.Decimal(12, 2)
+  status       EmployeeStatus @default(ACTIVE)
+  hireDate     DateTime       @map("hire_date")
+  departmentId String         @map("department_id")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt       @map("updated_at")
+
+  department   Department     @relation(fields: [departmentId], references: [id])
+
+  @@index([departmentId])
+  @@index([status])
+  @@map("employees")
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+
+  @@map("employee_status")
+}

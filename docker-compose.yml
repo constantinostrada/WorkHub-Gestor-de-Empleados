@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: workhub_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: workhub_user
+      POSTGRES_PASSWORD: workhub_pass
+      POSTGRES_DB: workhub_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U workhub_user -d workhub_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Next.js App ─────────────────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: workhub_app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://workhub_user:workhub_pass@postgres:5432/workhub_db?schema=public
+      NODE_ENV: production
+    ports:
+      - '3000:3000'
+
+  # ── Prisma Migrate (one-shot) ───────────────────────────────────────────────
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: workhub_migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://workhub_user:workhub_pass@postgres:5432/workhub_db?schema=public
+    command: npx prisma migrate deploy
+    profiles:
+      - migrate
+
+volumes:
+  postgres_data:
