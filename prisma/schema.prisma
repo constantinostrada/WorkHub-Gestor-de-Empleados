@@ -16,40 +16,44 @@ datasource db {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Department
+// Area
 // ─────────────────────────────────────────────────────────────────────────────
-model Department {
+model Area {
   id          String   @id @default(uuid())
   name        String   @unique
   description String?
+  managerId   String?  @map("manager_id")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt       @map("updated_at")
 
-  employees   Employee[]
+  manager     Employee?  @relation("AreaManager", fields: [managerId], references: [id])
+  employees   Employee[] @relation("AreaEmployees")
 
-  @@map("departments")
+  @@index([managerId])
+  @@map("areas")
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Employee
 // ─────────────────────────────────────────────────────────────────────────────
 model Employee {
-  id           String         @id @default(uuid())
-  firstName    String         @map("first_name")
-  lastName     String         @map("last_name")
-  email        String         @unique
-  phone        String?
-  position     String
-  salary       Decimal        @db.Decimal(12, 2)
-  status       EmployeeStatus @default(ACTIVE)
-  hireDate     DateTime       @map("hire_date")
-  departmentId String         @map("department_id")
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt       @map("updated_at")
+  id        String         @id @default(uuid())
+  firstName String         @map("first_name")
+  lastName  String         @map("last_name")
+  email     String         @unique
+  phone     String?
+  position  String
+  salary    Decimal        @db.Decimal(12, 2)
+  status    EmployeeStatus @default(ACTIVE)
+  hireDate  DateTime       @map("hire_date")
+  areaId    String?        @map("area_id")
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt       @map("updated_at")
 
-  department   Department     @relation(fields: [departmentId], references: [id])
+  area      Area?  @relation("AreaEmployees", fields: [areaId], references: [id])
+  managedAreas Area[] @relation("AreaManager")
 
-  @@index([departmentId])
+  @@index([areaId])
   @@index([status])
   @@map("employees")
 }

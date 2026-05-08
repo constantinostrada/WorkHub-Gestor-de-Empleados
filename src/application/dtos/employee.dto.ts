@@ -18,7 +18,7 @@ export interface CreateEmployeeDto {
   salary: number;
   currency?: string;
   hireDate: string; // ISO-8601 date string
-  departmentId: string;
+  areaId?: string | null;
 }
 
 export interface UpdateEmployeeDto {
@@ -30,7 +30,7 @@ export interface UpdateEmployeeDto {
   salary?: number;
   currency?: string;
   status?: EmployeeStatus;
-  departmentId?: string;
+  areaId?: string | null;
 }
 
 export interface GetEmployeeDto {
@@ -38,7 +38,7 @@ export interface GetEmployeeDto {
 }
 
 export interface ListEmployeesDto {
-  departmentId?: string;
+  areaId?: string;
   status?: EmployeeStatus;
   searchTerm?: string;
   page?: number;
@@ -63,7 +63,7 @@ export interface EmployeeResponseDto {
   currency: string;
   status: EmployeeStatus;
   hireDate: string;
-  departmentId: string;
+  areaId: string | null;
   createdAt: string;
   updatedAt: string;
 }

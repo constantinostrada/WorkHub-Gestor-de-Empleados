@@ -6,10 +6,9 @@
 
 import { DomainNotFoundError } from '@/domain/errors/DomainNotFoundError';
 import { DomainValidationError } from '@/domain/errors/DomainValidationError';
-import type { IDepartmentRepository } from '@/domain/repositories/IDepartmentRepository';
+import type { IAreaRepository } from '@/domain/repositories/IAreaRepository';
 import type { IEmployeeRepository } from '@/domain/repositories/IEmployeeRepository';
 import { Employee } from '@/domain/entities/Employee';
-import { Email } from '@/domain/value-objects/Email';
 import { Money } from '@/domain/value-objects/Money';
 import { isValidEmployeeStatus } from '@/domain/value-objects/EmployeeStatus';
 
@@ -19,7 +18,7 @@ import { EmployeeMapper } from '../../mappers/EmployeeMapper';
 export class UpdateEmployeeUseCase {
   constructor(
     private readonly employeeRepository: IEmployeeRepository,
-    private readonly departmentRepository: IDepartmentRepository,
+    private readonly areaRepository: IAreaRepository,
   ) {}
 
   async execute(dto: UpdateEmployeeDto): Promise<EmployeeResponseDto> {
@@ -28,11 +27,11 @@ export class UpdateEmployeeUseCase {
       throw new DomainNotFoundError('Employee', dto.id);
     }
 
-    // Validate new department if provided
-    if (dto.departmentId !== undefined) {
-      const deptExists = await this.departmentRepository.existsById(dto.departmentId);
-      if (!deptExists) {
-        throw new DomainValidationError(`Department "${dto.departmentId}" does not exist.`);
+    // Validate new area if provided as a non-null id (null clears the area)
+    if (dto.areaId) {
+      const areaExists = await this.areaRepository.existsById(dto.areaId);
+      if (!areaExists) {
+        throw new DomainValidationError(`Area "${dto.areaId}" does not exist.`);
       }
     }
 
@@ -57,7 +56,7 @@ export class UpdateEmployeeUseCase {
       salary: updatedSalary,
       status: updatedStatus,
       hireDate: existing.hireDate,  // hire date is immutable
-      departmentId: dto.departmentId ?? existing.departmentId,
+      areaId: dto.areaId !== undefined ? dto.areaId : existing.areaId,
       createdAt: existing.createdAt,
       updatedAt: new Date(),
     });

@@ -35,7 +35,7 @@ type EmployeeRow = {
   salary: Prisma.Decimal;
   status: string;
   hireDate: Date;
-  departmentId: string;
+  areaId: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -58,7 +58,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       salary: Money.create(Number(row.salary), 'EUR'),
       status: statusValue,
       hireDate: row.hireDate,
-      departmentId: row.departmentId,
+      areaId: row.areaId,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });
@@ -75,7 +75,9 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       salary: employee.salary.amount,
       status: employee.status,
       hireDate: employee.hireDate,
-      department: { connect: { id: employee.departmentId } },
+      ...(employee.areaId
+        ? { area: { connect: { id: employee.areaId } } }
+        : {}),
     };
   }
 
@@ -87,7 +89,9 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       position: employee.position,
       salary: employee.salary.amount,
       status: employee.status,
-      department: { connect: { id: employee.departmentId } },
+      area: employee.areaId
+        ? { connect: { id: employee.areaId } }
+        : { disconnect: true },
       updatedAt: employee.updatedAt,
     };
   }
@@ -110,8 +114,8 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
   ): Promise<PaginatedResult<Employee>> {
     const where: Prisma.EmployeeWhereInput = {};
 
-    if (filter.departmentId) {
-      where.departmentId = filter.departmentId;
+    if (filter.areaId) {
+      where.areaId = filter.areaId;
     }
     if (filter.status) {
       where.status = filter.status;

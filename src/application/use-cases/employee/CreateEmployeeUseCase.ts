@@ -9,7 +9,7 @@
 
 import { Employee } from '@/domain/entities/Employee';
 import { DomainValidationError } from '@/domain/errors/DomainValidationError';
-import type { IDepartmentRepository } from '@/domain/repositories/IDepartmentRepository';
+import type { IAreaRepository } from '@/domain/repositories/IAreaRepository';
 import type { IEmployeeRepository } from '@/domain/repositories/IEmployeeRepository';
 import { Email } from '@/domain/value-objects/Email';
 import { EmployeeStatus } from '@/domain/value-objects/EmployeeStatus';
@@ -22,14 +22,16 @@ import { generateId } from '../../utils/generateId';
 export class CreateEmployeeUseCase {
   constructor(
     private readonly employeeRepository: IEmployeeRepository,
-    private readonly departmentRepository: IDepartmentRepository,
+    private readonly areaRepository: IAreaRepository,
   ) {}
 
   async execute(dto: CreateEmployeeDto): Promise<EmployeeResponseDto> {
-    // 1. Validate department exists
-    const departmentExists = await this.departmentRepository.existsById(dto.departmentId);
-    if (!departmentExists) {
-      throw new DomainValidationError(`Department "${dto.departmentId}" does not exist.`);
+    // 1. Validate area exists when provided (areaId is optional on creation)
+    if (dto.areaId) {
+      const areaExists = await this.areaRepository.existsById(dto.areaId);
+      if (!areaExists) {
+        throw new DomainValidationError(`Area "${dto.areaId}" does not exist.`);
+      }
     }
 
     // 2. Ensure e-mail is unique
@@ -55,7 +57,7 @@ export class CreateEmployeeUseCase {
       salary,
       status: EmployeeStatus.ACTIVE,
       hireDate,
-      departmentId: dto.departmentId,
+      areaId: dto.areaId ?? null,
       createdAt: now,
       updatedAt: now,
     });

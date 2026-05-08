@@ -13,6 +13,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md,css}\"",
     "type-check": "tsc --noEmit",
     "prisma:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:migrate:reset": "prisma migrate reset",

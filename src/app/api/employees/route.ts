@@ -23,7 +23,7 @@ export async function GET(request: NextRequest): Promise<Response> {
   try {
     const { searchParams } = request.nextUrl;
     const query = listEmployeesSchema.safeParse({
-      departmentId: searchParams.get('departmentId') ?? undefined,
+      areaId:       searchParams.get('areaId') ?? undefined,
       status:       searchParams.get('status') ?? undefined,
       searchTerm:   searchParams.get('searchTerm') ?? undefined,
       page:         searchParams.get('page') ?? undefined,
