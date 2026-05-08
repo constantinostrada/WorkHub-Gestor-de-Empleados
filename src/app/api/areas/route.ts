@@ -1,6 +1,6 @@
 /**
- * GET  /api/departments  — list all departments
- * POST /api/departments  — create a department
+ * GET  /api/areas  — list all areas
+ * POST /api/areas  — create an area
  */
 
 import { type NextRequest } from 'next/server';
@@ -11,11 +11,11 @@ import {
   handleError,
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
-import { createDepartmentSchema } from '@/interfaces/http/validation/departmentValidation';
+import { createAreaSchema } from '@/interfaces/http/validation/areaValidation';
 
 export async function GET(): Promise<Response> {
   try {
-    const result = await container.listDepartments.execute();
+    const result = await container.listAreas.execute();
     return successResponse(result);
   } catch (err) {
     return handleError(err);
@@ -25,13 +25,13 @@ export async function GET(): Promise<Response> {
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     const body: unknown = await request.json();
-    const parsed = createDepartmentSchema.safeParse(body);
+    const parsed = createAreaSchema.safeParse(body);
 
     if (!parsed.success) {
       return handleError(new Error(parsed.error.message));
     }
 
-    const result = await container.createDepartment.execute(parsed.data);
+    const result = await container.createArea.execute(parsed.data);
     return createdResponse(result);
   } catch (err) {
     return handleError(err);

@@ -53,7 +53,7 @@ export default async function EmployeesPage(): Promise<JSX.Element> {
               <th>Name</th>
               <th>Email</th>
               <th>Position</th>
-              <th>Department</th>
+              <th>Area</th>
               <th>Status</th>
               <th>Salary</th>
             </tr>
@@ -64,7 +64,7 @@ export default async function EmployeesPage(): Promise<JSX.Element> {
                 <td>{emp.fullName}</td>
                 <td>{emp.email}</td>
                 <td>{emp.position}</td>
-                <td>{emp.departmentId}</td>
+                <td>{emp.areaId ?? '—'}</td>
                 <td>
                   <span className={`status status--${emp.status.toLowerCase()}`}>
                     {emp.status}

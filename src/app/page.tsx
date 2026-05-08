@@ -29,10 +29,10 @@ export default function HomePage(): JSX.Element {
         </article>
 
         <article className="card">
-          <h2>🏢 Departments</h2>
-          <p>Organise teams and departmental structure.</p>
-          <Link href="/departments" className="btn">
-            View Departments
+          <h2>🏢 Areas</h2>
+          <p>Organise teams and area structure.</p>
+          <Link href="/areas" className="btn">
+            View Areas
           </Link>
         </article>
 

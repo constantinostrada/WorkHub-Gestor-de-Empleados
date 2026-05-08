@@ -19,7 +19,7 @@ export const createEmployeeSchema = z.object({
   salary:       z.number().positive(),
   currency:     z.string().length(3).optional(),
   hireDate:     z.string().datetime({ offset: true }).or(z.string().date()),
-  departmentId: z.string().uuid(),
+  areaId:       z.string().uuid().nullable().optional(),
 });
 
 export const updateEmployeeSchema = z.object({
@@ -30,13 +30,13 @@ export const updateEmployeeSchema = z.object({
   salary:       z.number().positive().optional(),
   currency:     z.string().length(3).optional(),
   status:       z.nativeEnum(EmployeeStatus).optional(),
-  departmentId: z.string().uuid().optional(),
+  areaId:       z.string().uuid().nullable().optional(),
 });
 
 export const listEmployeesSchema = z.object({
-  departmentId: z.string().uuid().optional(),
-  status:       z.nativeEnum(EmployeeStatus).optional(),
-  searchTerm:   z.string().max(100).optional(),
-  page:         z.coerce.number().int().positive().default(1),
-  pageSize:     z.coerce.number().int().positive().max(100).default(20),
+  areaId:     z.string().uuid().optional(),
+  status:     z.nativeEnum(EmployeeStatus).optional(),
+  searchTerm: z.string().max(100).optional(),
+  page:       z.coerce.number().int().positive().default(1),
+  pageSize:   z.coerce.number().int().positive().max(100).default(20),
 });

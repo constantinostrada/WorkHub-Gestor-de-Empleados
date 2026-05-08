@@ -23,7 +23,7 @@ export class EmployeeMapper {
       currency: employee.salary.currency,
       status: employee.status,
       hireDate: employee.hireDate.toISOString(),
-      departmentId: employee.departmentId,
+      areaId: employee.areaId,
       createdAt: employee.createdAt.toISOString(),
       updatedAt: employee.updatedAt.toISOString(),
     };

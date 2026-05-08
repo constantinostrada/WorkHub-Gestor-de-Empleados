@@ -8,9 +8,9 @@
 import { CreateEmployeeUseCase } from '../use-cases/employee/CreateEmployeeUseCase';
 import { DomainValidationError } from '@/domain/errors/DomainValidationError';
 import type { IEmployeeRepository } from '@/domain/repositories/IEmployeeRepository';
-import type { IDepartmentRepository } from '@/domain/repositories/IDepartmentRepository';
+import type { IAreaRepository } from '@/domain/repositories/IAreaRepository';
 import type { Employee } from '@/domain/entities/Employee';
-import type { Department } from '@/domain/entities/Department';
+import type { Area } from '@/domain/entities/Area';
 import type {
   FindEmployeesFilter,
   PaginatedResult,
@@ -52,18 +52,18 @@ class FakeEmployeeRepository implements IEmployeeRepository {
   }
 }
 
-class FakeDepartmentRepository implements IDepartmentRepository {
+class FakeAreaRepository implements IAreaRepository {
   private existing: boolean;
 
-  constructor(departmentExists = true) {
-    this.existing = departmentExists;
+  constructor(areaExists = true) {
+    this.existing = areaExists;
   }
 
-  async findById(_id: string): Promise<Department | null> { return null; }
-  async findByName(_name: string): Promise<Department | null> { return null; }
-  async findAll(): Promise<Department[]> { return []; }
-  async save(_d: Department): Promise<void> { /* no-op */ }
-  async update(_d: Department): Promise<void> { /* no-op */ }
+  async findById(_id: string): Promise<Area | null> { return null; }
+  async findByName(_name: string): Promise<Area | null> { return null; }
+  async findAll(): Promise<Area[]> { return []; }
+  async save(_a: Area): Promise<void> { /* no-op */ }
+  async update(_a: Area): Promise<void> { /* no-op */ }
   async delete(_id: string): Promise<void> { /* no-op */ }
   async existsById(_id: string): Promise<boolean> { return this.existing; }
 }
@@ -72,19 +72,19 @@ class FakeDepartmentRepository implements IDepartmentRepository {
 
 describe('CreateEmployeeUseCase', () => {
   const validDto = {
-    firstName:    'Ana',
-    lastName:     'García',
-    email:        'ana@workhub.com',
-    position:     'Engineer',
-    salary:       3000,
-    hireDate:     '2022-01-15',
-    departmentId: '00000000-0000-0000-0000-000000000001',
+    firstName: 'Ana',
+    lastName:  'García',
+    email:     'ana@workhub.com',
+    position:  'Engineer',
+    salary:    3000,
+    hireDate:  '2022-01-15',
+    areaId:    '00000000-0000-0000-0000-000000000001',
   };
 
   it('creates an employee successfully', async () => {
     const useCase = new CreateEmployeeUseCase(
       new FakeEmployeeRepository(),
-      new FakeDepartmentRepository(true),
+      new FakeAreaRepository(true),
     );
 
     const result = await useCase.execute(validDto);
@@ -95,13 +95,24 @@ describe('CreateEmployeeUseCase', () => {
     expect(result.status).toBe('ACTIVE');
   });
 
-  it('throws when department does not exist', async () => {
+  it('throws when area does not exist', async () => {
     const useCase = new CreateEmployeeUseCase(
       new FakeEmployeeRepository(),
-      new FakeDepartmentRepository(false),
+      new FakeAreaRepository(false),
     );
 
     await expect(useCase.execute(validDto)).rejects.toThrow(DomainValidationError);
+  });
+
+  it('creates employee without an area when areaId is null', async () => {
+    const useCase = new CreateEmployeeUseCase(
+      new FakeEmployeeRepository(),
+      new FakeAreaRepository(false),
+    );
+
+    const result = await useCase.execute({ ...validDto, areaId: null });
+
+    expect(result.areaId).toBeNull();
   });
 
   it('throws when e-mail is already taken', async () => {
@@ -109,7 +120,7 @@ describe('CreateEmployeeUseCase', () => {
 
     const useCase = new CreateEmployeeUseCase(
       employeeRepo,
-      new FakeDepartmentRepository(true),
+      new FakeAreaRepository(true),
     );
 
     // First creation succeeds

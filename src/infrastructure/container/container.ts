@@ -9,11 +9,11 @@
  */
 
 import { prisma } from '../database/prismaClient';
-import { PrismaDepartmentRepository } from '../repositories/PrismaDepartmentRepository';
+import { PrismaAreaRepository } from '../repositories/PrismaAreaRepository';
 import { PrismaEmployeeRepository } from '../repositories/PrismaEmployeeRepository';
 
-import { CreateDepartmentUseCase } from '@/application/use-cases/department/CreateDepartmentUseCase';
-import { ListDepartmentsUseCase } from '@/application/use-cases/department/ListDepartmentsUseCase';
+import { CreateAreaUseCase } from '@/application/use-cases/area/CreateAreaUseCase';
+import { ListAreasUseCase } from '@/application/use-cases/area/ListAreasUseCase';
 import { CreateEmployeeUseCase } from '@/application/use-cases/employee/CreateEmployeeUseCase';
 import { DeleteEmployeeUseCase } from '@/application/use-cases/employee/DeleteEmployeeUseCase';
 import { GetEmployeeUseCase } from '@/application/use-cases/employee/GetEmployeeUseCase';
@@ -23,19 +23,19 @@ import { UpdateEmployeeUseCase } from '@/application/use-cases/employee/UpdateEm
 // ── Repositories ─────────────────────────────────────────────────────────────
 
 const employeeRepository = new PrismaEmployeeRepository(prisma);
-const departmentRepository = new PrismaDepartmentRepository(prisma);
+const areaRepository = new PrismaAreaRepository(prisma);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 
 export const container = {
   // Employee
-  createEmployee: new CreateEmployeeUseCase(employeeRepository, departmentRepository),
+  createEmployee: new CreateEmployeeUseCase(employeeRepository, areaRepository),
   getEmployee: new GetEmployeeUseCase(employeeRepository),
   listEmployees: new ListEmployeesUseCase(employeeRepository),
-  updateEmployee: new UpdateEmployeeUseCase(employeeRepository, departmentRepository),
+  updateEmployee: new UpdateEmployeeUseCase(employeeRepository, areaRepository),
   deleteEmployee: new DeleteEmployeeUseCase(employeeRepository),
 
-  // Department
-  createDepartment: new CreateDepartmentUseCase(departmentRepository),
-  listDepartments: new ListDepartmentsUseCase(departmentRepository),
+  // Area
+  createArea: new CreateAreaUseCase(areaRepository),
+  listAreas: new ListAreasUseCase(areaRepository),
 } as const;

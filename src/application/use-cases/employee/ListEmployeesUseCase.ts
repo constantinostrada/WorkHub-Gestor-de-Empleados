@@ -21,7 +21,7 @@ export class ListEmployeesUseCase {
 
     const result = await this.employeeRepository.findAll(
       {
-        departmentId: dto.departmentId,
+        areaId: dto.areaId,
         status: dto.status,
         searchTerm: dto.searchTerm,
       },

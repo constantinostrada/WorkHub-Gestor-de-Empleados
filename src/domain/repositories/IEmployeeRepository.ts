@@ -11,7 +11,7 @@ import type { Employee } from '../entities/Employee';
 import type { EmployeeStatus } from '../value-objects/EmployeeStatus';
 
 export interface FindEmployeesFilter {
-  departmentId?: string;
+  areaId?: string;
   status?: EmployeeStatus;
   searchTerm?: string; // matches first/last name or email
 }

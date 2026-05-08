@@ -14,14 +14,14 @@ const prisma = new PrismaClient();
 async function main(): Promise<void> {
   console.log('🌱 Seeding database …');
 
-  // ── Departments ──────────────────────────────────────────────────────────
-  const engineering = await prisma.department.upsert({
+  // ── Areas ────────────────────────────────────────────────────────────────
+  const engineering = await prisma.area.upsert({
     where: { name: 'Engineering' },
     update: {},
-    create: { name: 'Engineering', description: 'Software Engineering department' },
+    create: { name: 'Engineering', description: 'Software Engineering area' },
   });
 
-  const hr = await prisma.department.upsert({
+  const hr = await prisma.area.upsert({
     where: { name: 'Human Resources' },
     update: {},
     create: { name: 'Human Resources', description: 'HR and People Operations' },
@@ -40,7 +40,7 @@ async function main(): Promise<void> {
       salary: 72000,
       status: 'ACTIVE',
       hireDate: new Date('2021-03-15'),
-      departmentId: engineering.id,
+      areaId: engineering.id,
     },
   });
 
@@ -56,7 +56,7 @@ async function main(): Promise<void> {
       salary: 58000,
       status: 'ACTIVE',
       hireDate: new Date('2020-06-01'),
-      departmentId: hr.id,
+      areaId: hr.id,
     },
   });
 

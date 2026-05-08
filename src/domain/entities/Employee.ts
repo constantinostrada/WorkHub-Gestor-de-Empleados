@@ -20,7 +20,7 @@ export interface EmployeeProps {
   salary: Money;
   status: EmployeeStatus;
   hireDate: Date;
-  departmentId: string;
+  areaId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,9 +49,6 @@ export class Employee {
     if (!props.position.trim()) {
       throw new DomainValidationError('Employee position cannot be empty.');
     }
-    if (!props.departmentId.trim()) {
-      throw new DomainValidationError('Employee must belong to a department.');
-    }
     if (props.hireDate > new Date()) {
       throw new DomainValidationError('Hire date cannot be in the future.');
     }
@@ -68,7 +65,7 @@ export class Employee {
   get salary(): Money { return this.props.salary; }
   get status(): EmployeeStatus { return this.props.status; }
   get hireDate(): Date { return this.props.hireDate; }
-  get departmentId(): string { return this.props.departmentId; }
+  get areaId(): string | null { return this.props.areaId; }
   get createdAt(): Date { return this.props.createdAt; }
   get updatedAt(): Date { return this.props.updatedAt; }
 
@@ -117,16 +114,13 @@ export class Employee {
     });
   }
 
-  transferToDepartment(departmentId: string): Employee {
-    if (!departmentId.trim()) {
-      throw new DomainValidationError('Target department ID cannot be empty.');
-    }
-    if (departmentId === this.props.departmentId) {
-      throw new DomainValidationError('Employee is already in this department.');
+  transferToArea(areaId: string | null): Employee {
+    if (areaId === this.props.areaId) {
+      throw new DomainValidationError('Employee is already in this area.');
     }
     return Employee.create({
       ...this.props,
-      departmentId,
+      areaId,
       updatedAt: new Date(),
     });
   }

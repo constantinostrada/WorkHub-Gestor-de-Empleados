@@ -16,7 +16,7 @@ function makeEmployee(overrides: Partial<Parameters<typeof Employee.create>[0]> 
     salary: Money.create(3000, 'EUR'),
     status: EmployeeStatus.ACTIVE,
     hireDate: new Date('2022-01-01'),
-    departmentId: 'dept-1',
+    areaId: 'area-1',
     createdAt: now,
     updatedAt: now,
     ...overrides,
