@@ -52,10 +52,30 @@ model Employee {
 
   area      Area?  @relation("AreaEmployees", fields: [areaId], references: [id])
   managedAreas Area[] @relation("AreaManager")
+  timeEntries  TimeEntry[]
 
   @@index([areaId])
   @@index([status])
   @@map("employees")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TimeEntry — daily worked-hours record per employee
+// ─────────────────────────────────────────────────────────────────────────────
+model TimeEntry {
+  id         String   @id @default(uuid())
+  employeeId String   @map("employee_id")
+  date       DateTime @db.Date
+  hours      Decimal  @db.Decimal(4, 2)
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt       @map("updated_at")
+
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+  @@index([employeeId, date])
+  @@map("time_entries")
 }
 
 enum EmployeeStatus {
