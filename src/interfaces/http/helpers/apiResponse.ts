@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 
+import { DomainConflictError } from '@/domain/errors/DomainConflictError';
 import { DomainNotFoundError } from '@/domain/errors/DomainNotFoundError';
 import { DomainValidationError } from '@/domain/errors/DomainValidationError';
 
@@ -48,6 +49,9 @@ export function handleError(err: unknown): NextResponse {
   }
   if (err instanceof DomainNotFoundError) {
     return errorResponse(err.message, 'NOT_FOUND', 404);
+  }
+  if (err instanceof DomainConflictError) {
+    return errorResponse(err.message, 'CONFLICT', 409);
   }
 
   // Unexpected errors — do not leak internals
