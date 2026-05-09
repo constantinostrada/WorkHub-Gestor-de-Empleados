@@ -89,6 +89,7 @@ class FakeEmployeeRepository implements IEmployeeRepository {
     return { items, total: items.length, page: p?.page ?? 1, pageSize: p?.pageSize ?? 20, totalPages: 1 };
   }
   async save(e: Employee): Promise<void> { this.store.set(e.id, e); }
+  async saveMany(employees: Employee[]): Promise<void> { for (const e of employees) this.store.set(e.id, e); }
   async update(e: Employee): Promise<void> { this.store.set(e.id, e); }
   async delete(id: string): Promise<void> { this.store.delete(id); }
   async existsByEmail(email: string): Promise<boolean> { return (await this.findByEmail(email)) !== null; }

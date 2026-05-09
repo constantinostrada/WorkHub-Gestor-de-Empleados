@@ -41,6 +41,9 @@ class FakeEmployeeRepository implements IEmployeeRepository {
   async save(employee: Employee): Promise<void> {
     this.store.set(employee.id, employee);
   }
+  async saveMany(employees: Employee[]): Promise<void> {
+    for (const e of employees) this.store.set(e.id, e);
+  }
   async update(employee: Employee): Promise<void> {
     this.store.set(employee.id, employee);
   }
