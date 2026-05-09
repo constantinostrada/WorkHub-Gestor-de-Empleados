@@ -17,6 +17,7 @@ import {
   createdResponse,
   handleError,
 } from '@/interfaces/http/helpers/apiResponse';
+import { recordAuditEntry } from '@/interfaces/http/helpers/auditLog';
 import { apiRegisterTimeEntrySchema } from '@/interfaces/http/validation/timeEntryValidation';
 
 export async function POST(request: NextRequest): Promise<Response> {
@@ -36,6 +37,17 @@ export async function POST(request: NextRequest): Promise<Response> {
     };
 
     const result = await container.registerTimeEntry.execute(dto);
+    await recordAuditEntry(request, {
+      action: 'create',
+      resourceType: 'time_entry',
+      resourceId: result.id,
+      detailsJson: {
+        employee_id: parsed.data.employee_id,
+        date: parsed.data.date,
+        hours: parsed.data.hours,
+        ...(parsed.data.notes !== undefined ? { notes: parsed.data.notes } : {}),
+      },
+    });
     return createdResponse(result);
   } catch (err) {
     return handleError(err);

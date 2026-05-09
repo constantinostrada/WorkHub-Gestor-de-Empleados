@@ -12,6 +12,7 @@ import {
   handleError,
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
+import { recordAuditEntry } from '@/interfaces/http/helpers/auditLog';
 import { apiCreateAreaSchema } from '@/interfaces/http/validation/areaValidation';
 
 export async function GET(): Promise<Response> {
@@ -39,6 +40,16 @@ export async function POST(request: NextRequest): Promise<Response> {
     };
 
     const result = await container.createArea.execute(dto);
+    await recordAuditEntry(request, {
+      action: 'create',
+      resourceType: 'area',
+      resourceId: result.id,
+      detailsJson: {
+        name: parsed.data.name,
+        ...(parsed.data.description !== undefined ? { description: parsed.data.description } : {}),
+        ...(parsed.data.manager_id !== undefined ? { manager_id: parsed.data.manager_id } : {}),
+      },
+    });
     return createdResponse(result);
   } catch (err) {
     return handleError(err);
