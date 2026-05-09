@@ -53,6 +53,7 @@ model Employee {
   area      Area?  @relation("AreaEmployees", fields: [areaId], references: [id])
   managedAreas Area[] @relation("AreaManager")
   timeEntries  TimeEntry[]
+  vacations    Vacation[]
 
   @@index([areaId])
   @@index([status])
@@ -84,4 +85,33 @@ enum EmployeeStatus {
   ON_LEAVE
 
   @@map("employee_status")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Vacation — time-off request with approval workflow
+// ─────────────────────────────────────────────────────────────────────────────
+model Vacation {
+  id         String         @id @default(uuid())
+  employeeId String         @map("employee_id")
+  startDate  DateTime       @db.Date @map("start_date")
+  endDate    DateTime       @db.Date @map("end_date")
+  reason     String?
+  status     VacationStatus @default(PENDING)
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt       @map("updated_at")
+
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, status])
+  @@index([employeeId, startDate, endDate])
+  @@index([status])
+  @@map("vacations")
+}
+
+enum VacationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("vacation_status")
 }
