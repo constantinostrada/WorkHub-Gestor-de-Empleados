@@ -37,6 +37,12 @@ export interface IEmployeeRepository {
     pagination?: PaginationOptions,
   ): Promise<PaginatedResult<Employee>>;
   save(employee: Employee): Promise<void>;
+  /**
+   * Persists a batch of employees atomically: if any insert fails, the whole
+   * batch is rolled back. Implementations must wrap the writes in a single
+   * transaction.
+   */
+  saveMany(employees: Employee[]): Promise<void>;
   update(employee: Employee): Promise<void>;
   delete(id: string): Promise<void>;
   existsByEmail(email: string): Promise<boolean>;

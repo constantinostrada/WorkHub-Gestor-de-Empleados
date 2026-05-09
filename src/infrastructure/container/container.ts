@@ -20,6 +20,7 @@ import { GetAreaWithMembersUseCase } from '@/application/use-cases/area/GetAreaW
 import { ListAreasUseCase } from '@/application/use-cases/area/ListAreasUseCase';
 import { ListAuditLogsUseCase } from '@/application/use-cases/audit/ListAuditLogsUseCase';
 import { LogAuditEntryUseCase } from '@/application/use-cases/audit/LogAuditEntryUseCase';
+import { BulkImportEmployeesUseCase } from '@/application/use-cases/employee/BulkImportEmployeesUseCase';
 import { CreateEmployeeUseCase } from '@/application/use-cases/employee/CreateEmployeeUseCase';
 import { DeleteEmployeeUseCase } from '@/application/use-cases/employee/DeleteEmployeeUseCase';
 import { GetEmployeeUseCase } from '@/application/use-cases/employee/GetEmployeeUseCase';
@@ -49,6 +50,7 @@ export const container = {
   listEmployees: new ListEmployeesUseCase(employeeRepository),
   updateEmployee: new UpdateEmployeeUseCase(employeeRepository, areaRepository),
   deleteEmployee: new DeleteEmployeeUseCase(employeeRepository),
+  bulkImportEmployees: new BulkImportEmployeesUseCase(employeeRepository, areaRepository),
 
   // Area
   createArea: new CreateAreaUseCase(areaRepository),

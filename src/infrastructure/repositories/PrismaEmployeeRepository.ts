@@ -150,6 +150,13 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
     await this.db.employee.create({ data: this.toCreateInput(employee) });
   }
 
+  async saveMany(employees: Employee[]): Promise<void> {
+    if (employees.length === 0) return;
+    await this.db.$transaction(
+      employees.map((e) => this.db.employee.create({ data: this.toCreateInput(e) })),
+    );
+  }
+
   async update(employee: Employee): Promise<void> {
     const exists = await this.db.employee.findUnique({ where: { id: employee.id } });
     if (!exists) {
