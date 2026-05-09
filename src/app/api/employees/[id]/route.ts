@@ -1,6 +1,7 @@
 /**
  * GET    /api/employees/:id  — get a single employee
- * PATCH  /api/employees/:id  — partial update
+ * PUT    /api/employees/:id  — assign / unassign an area from `{ area_id }` (AC-3)
+ * PATCH  /api/employees/:id  — partial update (rich)
  * DELETE /api/employees/:id  — remove an employee
  */
 
@@ -12,7 +13,10 @@ import {
   noContentResponse,
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
-import { updateEmployeeSchema } from '@/interfaces/http/validation/employeeValidation';
+import {
+  apiAssignAreaSchema,
+  updateEmployeeSchema,
+} from '@/interfaces/http/validation/employeeValidation';
 
 interface RouteContext {
   params: { id: string };
@@ -24,6 +28,28 @@ export async function GET(
 ): Promise<Response> {
   try {
     const result = await container.getEmployee.execute({ id: params.id });
+    return successResponse(result);
+  } catch (err) {
+    return handleError(err);
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: RouteContext,
+): Promise<Response> {
+  try {
+    const body: unknown = await request.json();
+    const parsed = apiAssignAreaSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return handleError(new Error(parsed.error.message));
+    }
+
+    const result = await container.updateEmployee.execute({
+      id: params.id,
+      areaId: parsed.data.area_id,
+    });
     return successResponse(result);
   } catch (err) {
     return handleError(err);

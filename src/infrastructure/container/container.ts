@@ -13,6 +13,7 @@ import { PrismaAreaRepository } from '../repositories/PrismaAreaRepository';
 import { PrismaEmployeeRepository } from '../repositories/PrismaEmployeeRepository';
 
 import { CreateAreaUseCase } from '@/application/use-cases/area/CreateAreaUseCase';
+import { GetAreaWithMembersUseCase } from '@/application/use-cases/area/GetAreaWithMembersUseCase';
 import { ListAreasUseCase } from '@/application/use-cases/area/ListAreasUseCase';
 import { CreateEmployeeUseCase } from '@/application/use-cases/employee/CreateEmployeeUseCase';
 import { DeleteEmployeeUseCase } from '@/application/use-cases/employee/DeleteEmployeeUseCase';
@@ -38,4 +39,5 @@ export const container = {
   // Area
   createArea: new CreateAreaUseCase(areaRepository),
   listAreas: new ListAreasUseCase(areaRepository),
+  getAreaWithMembers: new GetAreaWithMembersUseCase(areaRepository, employeeRepository),
 } as const;

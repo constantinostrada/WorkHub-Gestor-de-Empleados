@@ -1,17 +1,18 @@
 /**
  * GET  /api/areas  — list all areas
- * POST /api/areas  — create an area
+ * POST /api/areas  — create an area from { name, description?, manager_id? } (AC-2)
  */
 
 import { type NextRequest } from 'next/server';
 
+import type { CreateAreaDto } from '@/application/dtos/area.dto';
 import { container } from '@/infrastructure/container/container';
 import {
   createdResponse,
   handleError,
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
-import { createAreaSchema } from '@/interfaces/http/validation/areaValidation';
+import { apiCreateAreaSchema } from '@/interfaces/http/validation/areaValidation';
 
 export async function GET(): Promise<Response> {
   try {
@@ -25,13 +26,19 @@ export async function GET(): Promise<Response> {
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     const body: unknown = await request.json();
-    const parsed = createAreaSchema.safeParse(body);
+    const parsed = apiCreateAreaSchema.safeParse(body);
 
     if (!parsed.success) {
       return handleError(new Error(parsed.error.message));
     }
 
-    const result = await container.createArea.execute(parsed.data);
+    const dto: CreateAreaDto = {
+      name: parsed.data.name,
+      ...(parsed.data.description !== undefined ? { description: parsed.data.description } : {}),
+      ...(parsed.data.manager_id !== undefined ? { managerId: parsed.data.manager_id } : {}),
+    };
+
+    const result = await container.createArea.execute(dto);
     return createdResponse(result);
   } catch (err) {
     return handleError(err);
