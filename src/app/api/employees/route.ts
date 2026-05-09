@@ -15,6 +15,7 @@ import {
   handleError,
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
+import { actorIdFromRequest, recordAudit } from '@/interfaces/http/helpers/auditHelper';
 import {
   apiCreateEmployeeSchema,
   apiListEmployeesSchema,
@@ -82,6 +83,15 @@ export async function POST(request: NextRequest): Promise<Response> {
     };
 
     const result = await container.createEmployee.execute(dto);
+
+    await recordAudit({
+      actorId: actorIdFromRequest(request),
+      action: 'create',
+      resourceType: 'employee',
+      resourceId: result.id,
+      detailsJson: parsed.data,
+    });
+
     return createdResponse(result);
   } catch (err) {
     return handleError(err);

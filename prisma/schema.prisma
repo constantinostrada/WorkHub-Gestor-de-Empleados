@@ -115,3 +115,21 @@ enum VacationStatus {
 
   @@map("vacation_status")
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AuditLog — append-only mutation tracking
+// ─────────────────────────────────────────────────────────────────────────────
+model AuditLog {
+  id           String   @id @default(uuid())
+  actorId      String?  @map("actor_id")
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String   @map("resource_id")
+  detailsJson  Json     @map("details_json")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
