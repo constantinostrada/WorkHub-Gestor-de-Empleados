@@ -12,6 +12,7 @@ import { prisma } from '../database/prismaClient';
 import { PrismaAreaRepository } from '../repositories/PrismaAreaRepository';
 import { PrismaEmployeeRepository } from '../repositories/PrismaEmployeeRepository';
 import { PrismaTimeEntryRepository } from '../repositories/PrismaTimeEntryRepository';
+import { PrismaVacationRepository } from '../repositories/PrismaVacationRepository';
 
 import { CreateAreaUseCase } from '@/application/use-cases/area/CreateAreaUseCase';
 import { GetAreaWithMembersUseCase } from '@/application/use-cases/area/GetAreaWithMembersUseCase';
@@ -21,6 +22,9 @@ import { DeleteEmployeeUseCase } from '@/application/use-cases/employee/DeleteEm
 import { GetEmployeeUseCase } from '@/application/use-cases/employee/GetEmployeeUseCase';
 import { ListEmployeesUseCase } from '@/application/use-cases/employee/ListEmployeesUseCase';
 import { UpdateEmployeeUseCase } from '@/application/use-cases/employee/UpdateEmployeeUseCase';
+import { GetEmployeeMonthlyReportUseCase } from '@/application/use-cases/report/GetEmployeeMonthlyReportUseCase';
+import { HoursByAreaReportUseCase } from '@/application/use-cases/report/HoursByAreaReportUseCase';
+import { VacationsSummaryReportUseCase } from '@/application/use-cases/report/VacationsSummaryReportUseCase';
 import { ListTimeEntriesByEmployeeUseCase } from '@/application/use-cases/time-entry/ListTimeEntriesByEmployeeUseCase';
 import { RegisterTimeEntryUseCase } from '@/application/use-cases/time-entry/RegisterTimeEntryUseCase';
 
@@ -29,6 +33,7 @@ import { RegisterTimeEntryUseCase } from '@/application/use-cases/time-entry/Reg
 const employeeRepository = new PrismaEmployeeRepository(prisma);
 const areaRepository = new PrismaAreaRepository(prisma);
 const timeEntryRepository = new PrismaTimeEntryRepository(prisma);
+const vacationRepository = new PrismaVacationRepository(prisma);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 
@@ -50,5 +55,21 @@ export const container = {
   listTimeEntriesByEmployee: new ListTimeEntriesByEmployeeUseCase(
     timeEntryRepository,
     employeeRepository,
+  ),
+
+  // Reports
+  hoursByAreaReport: new HoursByAreaReportUseCase(
+    areaRepository,
+    employeeRepository,
+    timeEntryRepository,
+  ),
+  vacationsSummaryReport: new VacationsSummaryReportUseCase(
+    employeeRepository,
+    vacationRepository,
+  ),
+  getEmployeeMonthlyReport: new GetEmployeeMonthlyReportUseCase(
+    employeeRepository,
+    timeEntryRepository,
+    vacationRepository,
   ),
 } as const;
