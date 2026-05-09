@@ -10,6 +10,7 @@ const config: Config = {
     '^@/application/(.*)$': '<rootDir>/src/application/$1',
     '^@/infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1',
     '^@/interfaces/(.*)$': '<rootDir>/src/interfaces/$1',
+    '^@/app/(.*)$': '<rootDir>/src/app/$1',
     '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
   },
   collectCoverageFrom: [
