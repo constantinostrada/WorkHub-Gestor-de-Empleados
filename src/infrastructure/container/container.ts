@@ -31,6 +31,7 @@ import { VacationsSummaryReportUseCase } from '@/application/use-cases/report/Va
 import { ListTimeEntriesByEmployeeUseCase } from '@/application/use-cases/time-entry/ListTimeEntriesByEmployeeUseCase';
 import { RegisterTimeEntryUseCase } from '@/application/use-cases/time-entry/RegisterTimeEntryUseCase';
 import { CreateVacationUseCase } from '@/application/use-cases/vacation/CreateVacationUseCase';
+import { GetVacationCalendarUseCase } from '@/application/use-cases/vacation/GetVacationCalendarUseCase';
 
 // ── Repositories ─────────────────────────────────────────────────────────────
 
@@ -80,6 +81,7 @@ export const container = {
 
   // Vacation
   createVacation: new CreateVacationUseCase(vacationRepository, employeeRepository),
+  getVacationCalendar: new GetVacationCalendarUseCase(employeeRepository, vacationRepository),
 
   // Audit
   logAuditEntry: new LogAuditEntryUseCase(auditLogRepository),
