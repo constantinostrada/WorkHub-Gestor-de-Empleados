@@ -6,8 +6,10 @@
  */
 
 import { DomainValidationError } from '../errors/DomainValidationError';
+import { VacationAlreadyStartedError } from '../errors/VacationAlreadyStartedError';
+import { VacationNotCancellableError } from '../errors/VacationNotCancellableError';
 
-export type VacationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+export type VacationStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
 
 export interface VacationProps {
   id: string;
@@ -16,6 +18,7 @@ export interface VacationProps {
   endDate: Date;
   status: VacationStatus;
   reason: string | null;
+  cancelledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +30,7 @@ export interface VacationCreateInput {
   endDate: Date;
   status?: VacationStatus;
   reason?: string | null;
+  cancelledAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -60,6 +64,7 @@ export class Vacation {
       endDate: end,
       status: input.status ?? 'PENDING',
       reason: input.reason ?? null,
+      cancelledAt: input.cancelledAt ?? null,
       createdAt: input.createdAt ?? now,
       updatedAt: input.updatedAt ?? now,
     });
@@ -91,6 +96,24 @@ export class Vacation {
     }
     this.props.status = 'REJECTED';
     this.props.updatedAt = at;
+  }
+
+  /**
+   * Cancel a not-yet-started vacation. Allowed from PENDING or APPROVED.
+   * Throws VacationAlreadyStartedError if `now >= startDate` and
+   * VacationNotCancellableError when the current status is terminal
+   * (CANCELLED or REJECTED).
+   */
+  cancel(now: Date): void {
+    if (this.props.status === 'CANCELLED' || this.props.status === 'REJECTED') {
+      throw new VacationNotCancellableError(this.props.status);
+    }
+    if (now.getTime() >= this.props.startDate.getTime()) {
+      throw new VacationAlreadyStartedError(this.props.startDate);
+    }
+    this.props.status = 'CANCELLED';
+    this.props.cancelledAt = now;
+    this.props.updatedAt = now;
   }
 
   // ── Day counting ──────────────────────────────────────────────────────────
@@ -127,6 +150,7 @@ export class Vacation {
   get endDate(): Date { return this.props.endDate; }
   get status(): VacationStatus { return this.props.status; }
   get reason(): string | null { return this.props.reason; }
+  get cancelledAt(): Date | null { return this.props.cancelledAt; }
   get createdAt(): Date { return this.props.createdAt; }
   get updatedAt(): Date { return this.props.updatedAt; }
 }

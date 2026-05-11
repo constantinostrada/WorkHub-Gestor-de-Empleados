@@ -17,6 +17,7 @@ type VacationRow = {
   endDate: Date;
   status: PrismaVacationStatus;
   reason: string | null;
+  cancelledAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -32,6 +33,7 @@ export class PrismaVacationRepository implements IVacationRepository {
       endDate: row.endDate,
       status: row.status as VacationStatus,
       reason: row.reason,
+      cancelledAt: row.cancelledAt,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });
@@ -51,12 +53,14 @@ export class PrismaVacationRepository implements IVacationRepository {
         endDate: vacation.endDate,
         status: vacation.status,
         reason: vacation.reason,
+        cancelledAt: vacation.cancelledAt,
       },
       update: {
         startDate: vacation.startDate,
         endDate: vacation.endDate,
         status: vacation.status,
         reason: vacation.reason,
+        cancelledAt: vacation.cancelledAt,
       },
     });
   }
