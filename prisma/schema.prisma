@@ -144,3 +144,16 @@ model AuditLog {
   @@index([action])
   @@map("audit_logs")
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WebhookSubscription — outbound webhook delivery subscriptions
+// ─────────────────────────────────────────────────────────────────────────────
+model WebhookSubscription {
+  id          String   @id @default(uuid())
+  callbackUrl String   @map("callback_url")
+  events      String[]
+  secret      String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("webhook_subscriptions")
+}

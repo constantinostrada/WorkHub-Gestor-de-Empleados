@@ -39,10 +39,27 @@ export interface VacationRejectedEvent {
   reason?: string;
 }
 
+export interface VacationCancelledEvent {
+  event_type: 'vacation.cancelled';
+  vacation_id: string;
+  employee_id: string;
+  start_date: string;
+  end_date: string;
+  cancelled_at: string;
+}
+
+export interface EmployeeOffboardedEvent {
+  event_type: 'employee.offboarded';
+  employee_id: string;
+  offboarded_at: string;
+}
+
 export type NotificationEvent =
   | VacationCreatedEvent
   | VacationApprovedEvent
-  | VacationRejectedEvent;
+  | VacationRejectedEvent
+  | VacationCancelledEvent
+  | EmployeeOffboardedEvent;
 
 export interface INotificationDispatcher {
   dispatch(event: NotificationEvent): Promise<void>;

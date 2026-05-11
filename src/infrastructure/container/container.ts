@@ -9,12 +9,15 @@
  */
 
 import { prisma } from '../database/prismaClient';
+import { CompositeNotificationDispatcher } from '../notifications/CompositeNotificationDispatcher';
 import { LogNotificationDispatcher } from '../notifications/LogNotificationDispatcher';
+import { WebhookDispatcher } from '../notifications/WebhookDispatcher';
 import { PrismaAreaRepository } from '../repositories/PrismaAreaRepository';
 import { PrismaAuditLogRepository } from '../repositories/PrismaAuditLogRepository';
 import { PrismaEmployeeRepository } from '../repositories/PrismaEmployeeRepository';
 import { PrismaTimeEntryRepository } from '../repositories/PrismaTimeEntryRepository';
 import { PrismaVacationRepository } from '../repositories/PrismaVacationRepository';
+import { PrismaWebhookSubscriptionRepository } from '../repositories/PrismaWebhookSubscriptionRepository';
 
 import { CreateAreaUseCase } from '@/application/use-cases/area/CreateAreaUseCase';
 import { GetAreaWithMembersUseCase } from '@/application/use-cases/area/GetAreaWithMembersUseCase';
@@ -38,6 +41,9 @@ import { CancelVacationUseCase } from '@/application/use-cases/vacation/CancelVa
 import { CreateVacationUseCase } from '@/application/use-cases/vacation/CreateVacationUseCase';
 import { GetVacationCalendarUseCase } from '@/application/use-cases/vacation/GetVacationCalendarUseCase';
 import { RejectVacationUseCase } from '@/application/use-cases/vacation/RejectVacationUseCase';
+import { DeleteWebhookUseCase } from '@/application/use-cases/webhook/DeleteWebhookUseCase';
+import { ListWebhooksUseCase } from '@/application/use-cases/webhook/ListWebhooksUseCase';
+import { SubscribeWebhookUseCase } from '@/application/use-cases/webhook/SubscribeWebhookUseCase';
 
 // ── Repositories ─────────────────────────────────────────────────────────────
 
@@ -46,10 +52,19 @@ const areaRepository = new PrismaAreaRepository(prisma);
 const timeEntryRepository = new PrismaTimeEntryRepository(prisma);
 const vacationRepository = new PrismaVacationRepository(prisma);
 const auditLogRepository = new PrismaAuditLogRepository(prisma);
+const webhookSubscriptionRepository = new PrismaWebhookSubscriptionRepository(prisma);
 
 // ── Outbound adapters ────────────────────────────────────────────────────────
 
-const notificationDispatcher = new LogNotificationDispatcher();
+const logAuditEntry = new LogAuditEntryUseCase(auditLogRepository);
+const webhookDispatcher = new WebhookDispatcher(
+  webhookSubscriptionRepository,
+  logAuditEntry,
+);
+const notificationDispatcher = new CompositeNotificationDispatcher([
+  new LogNotificationDispatcher(),
+  webhookDispatcher,
+]);
 
 // ── Use Cases ─────────────────────────────────────────────────────────────────
 
@@ -109,6 +124,11 @@ export const container = {
   bulkVacationAction: new BulkVacationActionUseCase(vacationRepository, areaRepository),
 
   // Audit
-  logAuditEntry: new LogAuditEntryUseCase(auditLogRepository),
+  logAuditEntry,
   listAuditLogs: new ListAuditLogsUseCase(auditLogRepository),
+
+  // Webhooks
+  subscribeWebhook: new SubscribeWebhookUseCase(webhookSubscriptionRepository),
+  listWebhooks: new ListWebhooksUseCase(webhookSubscriptionRepository),
+  deleteWebhook: new DeleteWebhookUseCase(webhookSubscriptionRepository),
 } as const;
