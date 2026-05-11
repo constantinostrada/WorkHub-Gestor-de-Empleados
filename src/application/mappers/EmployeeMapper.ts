@@ -25,6 +25,8 @@ export class EmployeeMapper {
       hireDate: employee.hireDate.toISOString(),
       areaId: employee.areaId,
       role: employee.role,
+      offboarded: employee.isOffboarded,
+      offboardedAt: employee.offboardedAt?.toISOString() ?? null,
       createdAt: employee.createdAt.toISOString(),
       updatedAt: employee.updatedAt.toISOString(),
     };

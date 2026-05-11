@@ -46,6 +46,12 @@ export class GetEmployeeMonthlyReportUseCase {
       throw new DomainNotFoundError('Employee', employeeId);
     }
 
+    // T13 AC-7: by default, offboarded employees are hidden from reports.
+    // Caller must opt in via includeOffboarded=true to view their history.
+    if (employee.isOffboarded && !(query.includeOffboarded ?? false)) {
+      throw new DomainNotFoundError('Employee', employeeId);
+    }
+
     const yearStart = new Date(Date.UTC(year, 0, 1));
     const yearEnd = new Date(Date.UTC(year, 11, 31));
 

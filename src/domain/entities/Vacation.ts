@@ -116,6 +116,23 @@ export class Vacation {
     this.props.updatedAt = now;
   }
 
+  /**
+   * Cascade-cancel triggered by employee offboarding (T13 AC-4). Only
+   * applicable to PENDING vacations. Sets reason to the system-provided
+   * value (audit trail proof that the cancel was system-driven, not user
+   * initiated). Skips the "already-started" date check — offboarding is a
+   * privileged system action.
+   */
+  cancelForOffboard(now: Date, reason: string): void {
+    if (this.props.status !== 'PENDING') {
+      throw new VacationNotCancellableError(this.props.status);
+    }
+    this.props.status = 'CANCELLED';
+    this.props.cancelledAt = now;
+    this.props.reason = reason;
+    this.props.updatedAt = now;
+  }
+
   // ── Day counting ──────────────────────────────────────────────────────────
 
   /** Inclusive day count between startDate and endDate. */

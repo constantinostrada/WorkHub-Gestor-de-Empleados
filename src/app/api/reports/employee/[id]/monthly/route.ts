@@ -36,9 +36,12 @@ export const GET = withRole(['admin', 'manager'])(async (
       throw new DomainValidationError('Query param "year" must match YYYY.');
     }
 
+    const includeOffboarded =
+      request.nextUrl.searchParams.get('include_offboarded') === 'true';
     const result = await container.getEmployeeMonthlyReport.execute({
       employeeId: params.id,
       year: Number(yearParam),
+      includeOffboarded,
     });
     return successResponse(result);
   } catch (err) {

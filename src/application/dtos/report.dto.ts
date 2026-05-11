@@ -12,15 +12,19 @@ export interface HoursByAreaQuery {
   year: number;
   /** Month of the year, 1..12. */
   month: number;
+  /** When true, offboarded employees are included. Defaults to false (T13 AC-7). */
+  includeOffboarded?: boolean;
 }
 
 export interface VacationsSummaryQuery {
   year: number;
+  includeOffboarded?: boolean;
 }
 
 export interface EmployeeMonthlyQuery {
   employeeId: string;
   year: number;
+  includeOffboarded?: boolean;
 }
 
 // ── Outputs ──────────────────────────────────────────────────────────────────

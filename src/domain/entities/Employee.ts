@@ -10,6 +10,7 @@ import type { Money } from '../value-objects/Money';
 import { EmployeeStatus } from '../value-objects/EmployeeStatus';
 import { DEFAULT_ROLE, isValidRole, type Role } from '../value-objects/Role';
 import { DomainValidationError } from '../errors/DomainValidationError';
+import { EmployeeAlreadyOffboardedError } from '../errors/EmployeeAlreadyOffboardedError';
 
 export interface EmployeeProps {
   id: string;
@@ -23,9 +24,14 @@ export interface EmployeeProps {
   hireDate: Date;
   areaId: string | null;
   role: Role;
+  offboardedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type EmployeeCreateInput = Omit<EmployeeProps, 'offboardedAt'> & {
+  offboardedAt?: Date | null;
+};
 
 export class Employee {
   private readonly props: EmployeeProps;
@@ -36,7 +42,11 @@ export class Employee {
 
   // ── Factory ────────────────────────────────────────────────────────────────
 
-  static create(props: EmployeeProps): Employee {
+  static create(input: EmployeeCreateInput): Employee {
+    const props: EmployeeProps = {
+      ...input,
+      offboardedAt: input.offboardedAt ?? null,
+    };
     Employee.validate(props);
     return new Employee(props);
   }
@@ -76,6 +86,8 @@ export class Employee {
   get hireDate(): Date { return this.props.hireDate; }
   get areaId(): string | null { return this.props.areaId; }
   get role(): Role { return this.props.role; }
+  get offboardedAt(): Date | null { return this.props.offboardedAt; }
+  get isOffboarded(): boolean { return this.props.offboardedAt !== null; }
   get createdAt(): Date { return this.props.createdAt; }
   get updatedAt(): Date { return this.props.updatedAt; }
 
@@ -132,6 +144,18 @@ export class Employee {
       ...this.props,
       areaId,
       updatedAt: new Date(),
+    });
+  }
+
+  offboard(now: Date): Employee {
+    if (this.props.offboardedAt !== null) {
+      throw new EmployeeAlreadyOffboardedError(this.props.id, this.props.offboardedAt);
+    }
+    return Employee.create({
+      ...this.props,
+      status: EmployeeStatus.INACTIVE,
+      offboardedAt: now,
+      updatedAt: now,
     });
   }
 }

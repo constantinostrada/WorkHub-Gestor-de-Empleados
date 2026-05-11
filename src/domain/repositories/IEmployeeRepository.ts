@@ -14,6 +14,12 @@ export interface FindEmployeesFilter {
   areaId?: string;
   status?: EmployeeStatus;
   searchTerm?: string; // matches first/last name or email
+  /**
+   * When false (the default), employees with offboardedAt !== null are
+   * excluded. When true, ALL employees are returned regardless of
+   * offboarding status. See T13 AC-5 / AC-6.
+   */
+  includeOffboarded?: boolean;
 }
 
 export interface PaginationOptions {

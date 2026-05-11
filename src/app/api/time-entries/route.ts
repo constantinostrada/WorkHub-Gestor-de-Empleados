@@ -9,9 +9,10 @@
  *   - 201 on success
  */
 
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 
 import type { RegisterTimeEntryDto } from '@/application/dtos/timeEntry.dto';
+import { EmployeeOffboardedError } from '@/domain/errors/EmployeeOffboardedError';
 import { container } from '@/infrastructure/container/container';
 import {
   createdResponse,
@@ -50,6 +51,21 @@ export async function POST(request: NextRequest): Promise<Response> {
     });
     return createdResponse(result);
   } catch (err) {
+    // T13 AC-3: registering time for an offboarded employee → 422 with the
+    // dedicated EMPLOYEE_OFFBOARDED code so the UI can show a tailored msg.
+    if (err instanceof EmployeeOffboardedError) {
+      return NextResponse.json(
+        {
+          error: err.message,
+          code: 'EMPLOYEE_OFFBOARDED',
+          details: {
+            employee_id: err.employeeId,
+            offboarded_at: err.offboardedAt.toISOString(),
+          },
+        },
+        { status: 422 },
+      );
+    }
     return handleError(err);
   }
 }

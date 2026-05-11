@@ -1,8 +1,8 @@
 import { DomainValidationError } from '../errors/DomainValidationError';
 
-export type AuditAction = 'create' | 'update' | 'delete' | 'vacation.cancelled';
+export type AuditAction = 'create' | 'update' | 'delete' | 'vacation.cancelled' | 'employee.offboarded';
 
-export const AUDIT_ACTIONS: readonly AuditAction[] = ['create', 'update', 'delete', 'vacation.cancelled'] as const;
+export const AUDIT_ACTIONS: readonly AuditAction[] = ['create', 'update', 'delete', 'vacation.cancelled', 'employee.offboarded'] as const;
 
 export interface AuditLogProps {
   id: string;

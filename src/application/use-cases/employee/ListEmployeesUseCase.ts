@@ -24,6 +24,7 @@ export class ListEmployeesUseCase {
         areaId: dto.areaId,
         status: dto.status,
         searchTerm: dto.searchTerm,
+        includeOffboarded: dto.includeOffboarded ?? false,
       },
       { page, pageSize },
     );

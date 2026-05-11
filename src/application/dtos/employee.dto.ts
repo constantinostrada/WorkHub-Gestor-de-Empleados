@@ -46,6 +46,7 @@ export interface ListEmployeesDto {
   searchTerm?: string;
   page?: number;
   pageSize?: number;
+  includeOffboarded?: boolean;
 }
 
 export interface DeleteEmployeeDto {
@@ -68,6 +69,8 @@ export interface EmployeeResponseDto {
   hireDate: string;
   areaId: string | null;
   role: Role;
+  offboarded: boolean;
+  offboardedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }

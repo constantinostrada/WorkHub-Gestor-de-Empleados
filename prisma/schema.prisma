@@ -37,19 +37,20 @@ model Area {
 // Employee
 // ─────────────────────────────────────────────────────────────────────────────
 model Employee {
-  id        String         @id @default(uuid())
-  firstName String         @map("first_name")
-  lastName  String         @map("last_name")
-  email     String         @unique
-  phone     String?
-  position  String
-  salary    Decimal        @db.Decimal(12, 2)
-  status    EmployeeStatus @default(ACTIVE)
-  hireDate  DateTime       @map("hire_date")
-  areaId    String?        @map("area_id")
-  role      EmployeeRole   @default(employee)
-  createdAt DateTime       @default(now()) @map("created_at")
-  updatedAt DateTime       @updatedAt       @map("updated_at")
+  id           String         @id @default(uuid())
+  firstName    String         @map("first_name")
+  lastName     String         @map("last_name")
+  email        String         @unique
+  phone        String?
+  position     String
+  salary       Decimal        @db.Decimal(12, 2)
+  status       EmployeeStatus @default(ACTIVE)
+  hireDate     DateTime       @map("hire_date")
+  areaId       String?        @map("area_id")
+  role         EmployeeRole   @default(employee)
+  offboardedAt DateTime?      @map("offboarded_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt       @map("updated_at")
 
   area      Area?  @relation("AreaEmployees", fields: [areaId], references: [id])
   managedAreas Area[] @relation("AreaManager")

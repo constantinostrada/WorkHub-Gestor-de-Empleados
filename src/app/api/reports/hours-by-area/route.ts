@@ -27,9 +27,12 @@ export const GET = withRole(['admin', 'manager'])(async (request: NextRequest): 
       throw new DomainValidationError('Query param "month" must match YYYY-MM.');
     }
 
+    const includeOffboarded =
+      request.nextUrl.searchParams.get('include_offboarded') === 'true';
     const result = await container.hoursByAreaReport.execute({
       year: Number(match[1]),
       month: Number(match[2]),
+      includeOffboarded,
     });
     return successResponse(result);
   } catch (err) {

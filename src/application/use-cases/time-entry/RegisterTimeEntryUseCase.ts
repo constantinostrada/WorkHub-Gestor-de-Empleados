@@ -13,6 +13,7 @@
 import { TimeEntry } from '@/domain/entities/TimeEntry';
 import { DomainConflictError } from '@/domain/errors/DomainConflictError';
 import { DomainNotFoundError } from '@/domain/errors/DomainNotFoundError';
+import { EmployeeOffboardedError } from '@/domain/errors/EmployeeOffboardedError';
 import type { IEmployeeRepository } from '@/domain/repositories/IEmployeeRepository';
 import type { ITimeEntryRepository } from '@/domain/repositories/ITimeEntryRepository';
 
@@ -31,6 +32,11 @@ export class RegisterTimeEntryUseCase {
     const employee = await this.employeeRepository.findById(dto.employeeId);
     if (!employee) {
       throw new DomainNotFoundError('Employee', dto.employeeId);
+    }
+
+    // 1b. T13 AC-3: offboarded employees can no longer log time.
+    if (employee.isOffboarded && employee.offboardedAt !== null) {
+      throw new EmployeeOffboardedError(employee.id, employee.offboardedAt);
     }
 
     // 2. Parse the date. We rely on TimeEntry.create to truncate to date-only
