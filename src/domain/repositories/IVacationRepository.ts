@@ -25,10 +25,15 @@ export interface IVacationRepository {
     statuses?: VacationStatus[],
   ): Promise<Vacation[]>;
 
-  /** All vacations whose date range overlaps [from, to], optionally filtered. */
+  /**
+   * All vacations whose date range overlaps [from, to], optionally filtered by
+   * status and by the owning employee's area. The area filter joins through
+   * Employee.areaId at the persistence boundary so callers stay area-agnostic.
+   */
   findOverlapping(
     from: Date,
     to: Date,
     statuses?: VacationStatus[],
+    areaId?: string,
   ): Promise<Vacation[]>;
 }

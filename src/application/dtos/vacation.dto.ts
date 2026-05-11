@@ -49,3 +49,34 @@ export interface VacationCalendarResponseDto {
   month: number;
   days: VacationCalendarDayDto[];
 }
+
+export type BulkVacationAction = 'approve' | 'reject';
+
+export interface BulkVacationActionFilter {
+  from: Date;
+  to: Date;
+  areaId?: string;
+  status?: 'PENDING';
+}
+
+export interface BulkVacationActionDto {
+  filter: BulkVacationActionFilter;
+  action: BulkVacationAction;
+  reason?: string;
+}
+
+export interface BulkActionSucceededItem {
+  vacation_id: string;
+  new_status: 'APPROVED' | 'REJECTED';
+}
+
+export interface BulkActionFailedItem {
+  vacation_id: string;
+  reason: string;
+}
+
+export interface BulkVacationActionResult {
+  processed: number;
+  succeeded: BulkActionSucceededItem[];
+  failed: BulkActionFailedItem[];
+}

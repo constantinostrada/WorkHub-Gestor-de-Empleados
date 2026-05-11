@@ -32,6 +32,7 @@ import { VacationsSummaryReportUseCase } from '@/application/use-cases/report/Va
 import { ListTimeEntriesByEmployeeUseCase } from '@/application/use-cases/time-entry/ListTimeEntriesByEmployeeUseCase';
 import { RegisterTimeEntryUseCase } from '@/application/use-cases/time-entry/RegisterTimeEntryUseCase';
 import { ApproveVacationUseCase } from '@/application/use-cases/vacation/ApproveVacationUseCase';
+import { BulkVacationActionUseCase } from '@/application/use-cases/vacation/BulkVacationActionUseCase';
 import { CancelVacationUseCase } from '@/application/use-cases/vacation/CancelVacationUseCase';
 import { CreateVacationUseCase } from '@/application/use-cases/vacation/CreateVacationUseCase';
 import { GetVacationCalendarUseCase } from '@/application/use-cases/vacation/GetVacationCalendarUseCase';
@@ -98,6 +99,7 @@ export const container = {
   rejectVacation: new RejectVacationUseCase(vacationRepository, notificationDispatcher),
   cancelVacation: new CancelVacationUseCase(vacationRepository),
   getVacationCalendar: new GetVacationCalendarUseCase(employeeRepository, vacationRepository),
+  bulkVacationAction: new BulkVacationActionUseCase(vacationRepository, areaRepository),
 
   // Audit
   logAuditEntry: new LogAuditEntryUseCase(auditLogRepository),
