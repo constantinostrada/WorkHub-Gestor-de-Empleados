@@ -10,10 +10,16 @@ export interface VacationResponseDto {
   employee_id: string;
   start_date: string;
   end_date: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
   reason: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface CancelVacationResponseDto {
+  id: string;
+  status: 'cancelled';
+  cancelled_at: string;
 }
 
 export interface VacationCalendarQuery {

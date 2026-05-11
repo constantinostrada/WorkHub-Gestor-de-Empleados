@@ -104,10 +104,11 @@ model Vacation {
   employeeId String          @map("employee_id")
   startDate  DateTime        @db.Date @map("start_date")
   endDate    DateTime        @db.Date @map("end_date")
-  status     VacationStatus  @default(PENDING)
-  reason     String?
-  createdAt  DateTime        @default(now()) @map("created_at")
-  updatedAt  DateTime        @updatedAt       @map("updated_at")
+  status      VacationStatus  @default(PENDING)
+  reason      String?
+  cancelledAt DateTime?       @map("cancelled_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt       @map("updated_at")
 
   employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
@@ -121,6 +122,7 @@ enum VacationStatus {
   PENDING
   APPROVED
   REJECTED
+  CANCELLED
 
   @@map("vacation_status")
 }
