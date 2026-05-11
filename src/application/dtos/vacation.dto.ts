@@ -22,6 +22,11 @@ export interface CancelVacationResponseDto {
   cancelled_at: string;
 }
 
+export interface CancelVacationResult {
+  vacation: CancelVacationResponseDto;
+  vacation_status_before: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+}
+
 export interface VacationCalendarQuery {
   year: number;
   month: number;
