@@ -6,7 +6,9 @@ export type AuditAction =
   | 'delete'
   | 'vacation.cancelled'
   | 'vacation.approved'
-  | 'vacation.rejected';
+  | 'vacation.rejected'
+  | 'webhook.delivered'
+  | 'webhook.failed';
 
 export const AUDIT_ACTIONS: readonly AuditAction[] = [
   'create',
@@ -15,6 +17,8 @@ export const AUDIT_ACTIONS: readonly AuditAction[] = [
   'vacation.cancelled',
   'vacation.approved',
   'vacation.rejected',
+  'webhook.delivered',
+  'webhook.failed',
 ] as const;
 
 export interface AuditLogProps {
