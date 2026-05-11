@@ -8,7 +8,8 @@ export type AuditAction =
   | 'vacation.approved'
   | 'vacation.rejected'
   | 'webhook.delivered'
-  | 'webhook.failed';
+  | 'webhook.failed'
+  | 'employee.transferred';
 
 export const AUDIT_ACTIONS: readonly AuditAction[] = [
   'create',
@@ -19,6 +20,7 @@ export const AUDIT_ACTIONS: readonly AuditAction[] = [
   'vacation.rejected',
   'webhook.delivered',
   'webhook.failed',
+  'employee.transferred',
 ] as const;
 
 export interface AuditLogProps {

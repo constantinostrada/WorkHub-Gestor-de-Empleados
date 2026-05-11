@@ -28,6 +28,7 @@ import { CreateEmployeeUseCase } from '@/application/use-cases/employee/CreateEm
 import { DeleteEmployeeUseCase } from '@/application/use-cases/employee/DeleteEmployeeUseCase';
 import { GetEmployeeUseCase } from '@/application/use-cases/employee/GetEmployeeUseCase';
 import { ListEmployeesUseCase } from '@/application/use-cases/employee/ListEmployeesUseCase';
+import { TransferEmployeeUseCase } from '@/application/use-cases/employee/TransferEmployeeUseCase';
 import { UpdateEmployeeUseCase } from '@/application/use-cases/employee/UpdateEmployeeUseCase';
 import { GetAreaDashboardUseCase } from '@/application/use-cases/report/GetAreaDashboardUseCase';
 import { GetEmployeeMonthlyReportUseCase } from '@/application/use-cases/report/GetEmployeeMonthlyReportUseCase';
@@ -75,6 +76,12 @@ export const container = {
   listEmployees: new ListEmployeesUseCase(employeeRepository),
   updateEmployee: new UpdateEmployeeUseCase(employeeRepository, areaRepository),
   deleteEmployee: new DeleteEmployeeUseCase(employeeRepository),
+  transferEmployee: new TransferEmployeeUseCase(
+    employeeRepository,
+    areaRepository,
+    vacationRepository,
+    timeEntryRepository,
+  ),
 
   // Area
   createArea: new CreateAreaUseCase(areaRepository),
