@@ -7,8 +7,11 @@
 
 import type { Prisma, PrismaClient } from '@prisma/client';
 
-import { TimeEntry } from '@/domain/entities/TimeEntry';
-import type { ITimeEntryRepository } from '@/domain/repositories/ITimeEntryRepository';
+import { TimeEntry, type TimeEntryStatus } from '@/domain/entities/TimeEntry';
+import type {
+  FindTimeEntriesFilter,
+  ITimeEntryRepository,
+} from '@/domain/repositories/ITimeEntryRepository';
 
 type TimeEntryRow = {
   id: string;
@@ -16,6 +19,12 @@ type TimeEntryRow = {
   date: Date;
   hours: Prisma.Decimal;
   notes: string | null;
+  status: TimeEntryStatus;
+  approvedAt: Date | null;
+  approvedBy: string | null;
+  rejectedAt: Date | null;
+  rejectedBy: string | null;
+  rejectionReason: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -32,6 +41,12 @@ export class PrismaTimeEntryRepository implements ITimeEntryRepository {
       date: row.date,
       hours: Number(row.hours),
       notes: row.notes,
+      status: row.status,
+      approvedAt: row.approvedAt,
+      approvedBy: row.approvedBy,
+      rejectedAt: row.rejectedAt,
+      rejectedBy: row.rejectedBy,
+      rejectionReason: row.rejectionReason,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });
@@ -45,13 +60,30 @@ export class PrismaTimeEntryRepository implements ITimeEntryRepository {
   // ── ITimeEntryRepository ─────────────────────────────────────────────────
 
   async save(entry: TimeEntry): Promise<void> {
-    await this.db.timeEntry.create({
-      data: {
+    await this.db.timeEntry.upsert({
+      where: { id: entry.id },
+      create: {
         id: entry.id,
         employeeId: entry.employeeId,
         date: entry.date,
         hours: entry.hours,
         notes: entry.notes,
+        status: entry.status,
+        approvedAt: entry.approvedAt,
+        approvedBy: entry.approvedBy,
+        rejectedAt: entry.rejectedAt,
+        rejectedBy: entry.rejectedBy,
+        rejectionReason: entry.rejectionReason,
+      },
+      update: {
+        hours: entry.hours,
+        notes: entry.notes,
+        status: entry.status,
+        approvedAt: entry.approvedAt,
+        approvedBy: entry.approvedBy,
+        rejectedAt: entry.rejectedAt,
+        rejectedBy: entry.rejectedBy,
+        rejectionReason: entry.rejectionReason,
       },
     });
   }
@@ -73,6 +105,22 @@ export class PrismaTimeEntryRepository implements ITimeEntryRepository {
         },
       },
       orderBy: { date: 'asc' },
+    });
+    return rows.map((r) => this.toDomain(r));
+  }
+
+  async findById(id: string): Promise<TimeEntry | null> {
+    const row = await this.db.timeEntry.findUnique({ where: { id } });
+    return row ? this.toDomain(row) : null;
+  }
+
+  async findAll(filter: FindTimeEntriesFilter = {}): Promise<TimeEntry[]> {
+    const rows = await this.db.timeEntry.findMany({
+      where: {
+        ...(filter.status !== undefined ? { status: filter.status } : {}),
+        ...(filter.employeeId !== undefined ? { employeeId: filter.employeeId } : {}),
+      },
+      orderBy: { date: 'desc' },
     });
     return rows.map((r) => this.toDomain(r));
   }

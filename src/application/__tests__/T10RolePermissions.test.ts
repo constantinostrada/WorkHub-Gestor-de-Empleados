@@ -69,6 +69,13 @@ const ucMocks = {
   createVacation: jest.fn(async (_dto: unknown) => ({ id: 'vac-1', status: 'pending' })),
   approveVacation: jest.fn(async (_dto: unknown) => ({ id: 'vac-1', status: 'approved' })),
   rejectVacation: jest.fn(async (_dto: unknown) => ({ id: 'vac-1', status: 'rejected' })),
+  approveTimeEntry: jest.fn(async (_dto: unknown) => ({
+    id: 'te-1', status: 'APPROVED', approved_at: '2026-05-11T00:00:00.000Z', approved_by: null,
+  })),
+  rejectTimeEntry: jest.fn(async (_dto: unknown) => ({
+    id: 'te-1', status: 'REJECTED', rejected_at: '2026-05-11T00:00:00.000Z', rejected_by: null,
+    rejection_reason: 'No',
+  })),
   listAuditLogs: jest.fn(async (_dto: unknown) => ({ logs: [], total: 0, has_more: false })),
   hoursByAreaReport: jest.fn(async (_dto: unknown) => []),
   vacationsSummaryReport: jest.fn(async (_dto: unknown) => []),
@@ -85,6 +92,8 @@ jest.mock('@/infrastructure/container/container', () => ({
     get createVacation() { return { execute: ucMocks.createVacation }; },
     get approveVacation() { return { execute: ucMocks.approveVacation }; },
     get rejectVacation() { return { execute: ucMocks.rejectVacation }; },
+    get approveTimeEntry() { return { execute: ucMocks.approveTimeEntry }; },
+    get rejectTimeEntry() { return { execute: ucMocks.rejectTimeEntry }; },
     get listAuditLogs() { return { execute: ucMocks.listAuditLogs }; },
     get hoursByAreaReport() { return { execute: ucMocks.hoursByAreaReport }; },
     get vacationsSummaryReport() { return { execute: ucMocks.vacationsSummaryReport }; },
@@ -407,6 +416,32 @@ describe('AC-6 · /api/vacations transitions require manager (admin override OK)
           { params: { id: 'v1' } } as any,
         ),
       ucMocks.rejectVacation,
+      ['admin', 'manager'],
+    );
+  });
+
+  it('POST /api/time-entries/:id/approve → admin + manager (T14 AC-2/AC-8)', async () => {
+    const { POST } = await import('@/app/api/time-entries/[id]/approve/route');
+    await assertRoleGate(
+      (role) =>
+        POST(
+          FakeRequestContext({ role }),
+          { params: { id: 'te-1' } } as any,
+        ),
+      ucMocks.approveTimeEntry,
+      ['admin', 'manager'],
+    );
+  });
+
+  it('POST /api/time-entries/:id/reject → admin + manager (T14 AC-2/AC-8)', async () => {
+    const { POST } = await import('@/app/api/time-entries/[id]/reject/route');
+    await assertRoleGate(
+      (role) =>
+        POST(
+          FakeRequestContext({ role, body: { reason: 'No' } }),
+          { params: { id: 'te-1' } } as any,
+        ),
+      ucMocks.rejectTimeEntry,
       ['admin', 'manager'],
     );
   });
