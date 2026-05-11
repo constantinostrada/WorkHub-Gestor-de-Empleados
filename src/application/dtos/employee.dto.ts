@@ -6,6 +6,7 @@
  */
 
 import type { EmployeeStatus } from '@/domain/value-objects/EmployeeStatus';
+import type { Role } from '@/domain/value-objects/Role';
 
 // ── Input DTOs ─────────────────────────────────────────────────────────────
 
@@ -19,6 +20,7 @@ export interface CreateEmployeeDto {
   currency?: string;
   hireDate: string; // ISO-8601 date string
   areaId?: string | null;
+  role?: Role;
 }
 
 export interface UpdateEmployeeDto {
@@ -31,6 +33,7 @@ export interface UpdateEmployeeDto {
   currency?: string;
   status?: EmployeeStatus;
   areaId?: string | null;
+  role?: Role;
 }
 
 export interface GetEmployeeDto {
@@ -64,6 +67,7 @@ export interface EmployeeResponseDto {
   status: EmployeeStatus;
   hireDate: string;
   areaId: string | null;
+  role: Role;
   createdAt: string;
   updatedAt: string;
 }

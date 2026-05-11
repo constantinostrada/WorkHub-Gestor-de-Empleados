@@ -14,6 +14,7 @@ import type { IEmployeeRepository } from '@/domain/repositories/IEmployeeReposit
 import { Email } from '@/domain/value-objects/Email';
 import { EmployeeStatus } from '@/domain/value-objects/EmployeeStatus';
 import { Money } from '@/domain/value-objects/Money';
+import { DEFAULT_ROLE } from '@/domain/value-objects/Role';
 
 import type { CreateEmployeeDto, EmployeeResponseDto } from '../../dtos/employee.dto';
 import { EmployeeMapper } from '../../mappers/EmployeeMapper';
@@ -58,6 +59,7 @@ export class CreateEmployeeUseCase {
       status: EmployeeStatus.ACTIVE,
       hireDate,
       areaId: dto.areaId ?? null,
+      role: dto.role ?? DEFAULT_ROLE,
       createdAt: now,
       updatedAt: now,
     });

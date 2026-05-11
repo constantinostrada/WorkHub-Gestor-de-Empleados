@@ -12,11 +12,12 @@ import {
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
 import { recordAuditEntry } from '@/interfaces/http/helpers/auditLog';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 
-export async function POST(
+export const POST = withRole(['admin', 'manager'])(async (
   request: NextRequest,
   { params }: { params: { id: string } },
-): Promise<Response> {
+): Promise<Response> => {
   try {
     const actorHeader = request.headers.get('x-actor-id');
     const approverId = actorHeader && actorHeader.trim() !== '' ? actorHeader : null;
@@ -37,4 +38,4 @@ export async function POST(
   } catch (err) {
     return handleError(err);
   }
-}
+});

@@ -21,6 +21,7 @@ import type {
 import { Email } from '@/domain/value-objects/Email';
 import { EmployeeStatus } from '@/domain/value-objects/EmployeeStatus';
 import { Money } from '@/domain/value-objects/Money';
+import { DEFAULT_ROLE, isValidRole, type Role } from '@/domain/value-objects/Role';
 
 import type { PrismaClient } from '@prisma/client';
 
@@ -36,6 +37,7 @@ type EmployeeRow = {
   status: string;
   hireDate: Date;
   areaId: string | null;
+  role: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -47,6 +49,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
 
   private toDomain(row: EmployeeRow): Employee {
     const statusValue = row.status as EmployeeStatus;
+    const roleValue: Role = isValidRole(row.role) ? row.role : DEFAULT_ROLE;
 
     return Employee.create({
       id: row.id,
@@ -59,6 +62,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       status: statusValue,
       hireDate: row.hireDate,
       areaId: row.areaId,
+      role: roleValue,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });
@@ -74,6 +78,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       position: employee.position,
       salary: employee.salary.amount,
       status: employee.status,
+      role: employee.role,
       hireDate: employee.hireDate,
       ...(employee.areaId
         ? { area: { connect: { id: employee.areaId } } }
@@ -89,6 +94,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       position: employee.position,
       salary: employee.salary.amount,
       status: employee.status,
+      role: employee.role,
       area: employee.areaId
         ? { connect: { id: employee.areaId } }
         : { disconnect: true },

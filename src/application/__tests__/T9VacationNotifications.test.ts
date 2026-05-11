@@ -141,6 +141,7 @@ function makeEmployee(overrides: Partial<{
     status: EmployeeStatus.ACTIVE,
     hireDate: new Date('2024-01-01T00:00:00Z'),
     areaId: overrides.areaId === undefined ? 'area-1' : overrides.areaId,
+    role: 'employee',
     createdAt: new Date('2024-01-01T00:00:00Z'),
     updatedAt: new Date('2024-01-01T00:00:00Z'),
   });

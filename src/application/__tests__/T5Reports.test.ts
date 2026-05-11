@@ -197,6 +197,7 @@ function makeEmployee(id: string, areaId: string | null, firstName = 'Ana'): Emp
     status: EmployeeStatus.ACTIVE,
     hireDate: now,
     areaId,
+    role: 'employee',
     createdAt: now,
     updatedAt: now,
   });

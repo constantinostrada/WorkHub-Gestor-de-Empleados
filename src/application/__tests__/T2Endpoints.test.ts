@@ -130,6 +130,7 @@ function seedEmployee(
     status: EmployeeStatus.ACTIVE,
     hireDate: now,
     areaId: opts.areaId,
+    role: 'employee',
     createdAt: now,
     updatedAt: now,
   });

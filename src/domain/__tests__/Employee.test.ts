@@ -17,6 +17,7 @@ function makeEmployee(overrides: Partial<Parameters<typeof Employee.create>[0]> 
     status: EmployeeStatus.ACTIVE,
     hireDate: new Date('2022-01-01'),
     areaId: 'area-1',
+    role: 'employee',
     createdAt: now,
     updatedAt: now,
     ...overrides,

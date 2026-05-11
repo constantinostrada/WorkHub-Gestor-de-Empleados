@@ -15,10 +15,11 @@ import { type NextRequest } from 'next/server';
 import { DomainValidationError } from '@/domain/errors/DomainValidationError';
 import { container } from '@/infrastructure/container/container';
 import { handleError, successResponse } from '@/interfaces/http/helpers/apiResponse';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 
 const YEAR_PATTERN = /^\d{4}$/;
 
-export async function GET(request: NextRequest): Promise<Response> {
+export const GET = withRole(['admin', 'manager'])(async (request: NextRequest): Promise<Response> => {
   try {
     const yearParam = request.nextUrl.searchParams.get('year');
     if (!yearParam) {
@@ -35,4 +36,4 @@ export async function GET(request: NextRequest): Promise<Response> {
   } catch (err) {
     return handleError(err);
   }
-}
+});

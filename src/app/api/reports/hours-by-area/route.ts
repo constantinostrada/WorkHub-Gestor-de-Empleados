@@ -12,10 +12,11 @@ import { type NextRequest } from 'next/server';
 import { DomainValidationError } from '@/domain/errors/DomainValidationError';
 import { container } from '@/infrastructure/container/container';
 import { handleError, successResponse } from '@/interfaces/http/helpers/apiResponse';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 
 const MONTH_PATTERN = /^(\d{4})-(0[1-9]|1[0-2])$/;
 
-export async function GET(request: NextRequest): Promise<Response> {
+export const GET = withRole(['admin', 'manager'])(async (request: NextRequest): Promise<Response> => {
   try {
     const monthParam = request.nextUrl.searchParams.get('month');
     if (!monthParam) {
@@ -34,4 +35,4 @@ export async function GET(request: NextRequest): Promise<Response> {
   } catch (err) {
     return handleError(err);
   }
-}
+});

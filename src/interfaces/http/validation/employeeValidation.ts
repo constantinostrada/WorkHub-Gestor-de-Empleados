@@ -9,6 +9,7 @@
 import { z } from 'zod';
 
 import { EmployeeStatus } from '@/domain/value-objects/EmployeeStatus';
+import { ROLES } from '@/domain/value-objects/Role';
 
 export const createEmployeeSchema = z.object({
   firstName:    z.string().min(1).max(100),
@@ -52,7 +53,7 @@ export const listEmployeesSchema = z.object({
 export const apiCreateEmployeeSchema = z.object({
   name:  z.string().min(1).max(200),
   email: z.string().email(),
-  role:  z.string().min(1).max(150),
+  role:  z.enum(ROLES),
 });
 
 export const apiAssignAreaSchema = z.object({

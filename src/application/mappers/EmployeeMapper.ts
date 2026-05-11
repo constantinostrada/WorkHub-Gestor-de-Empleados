@@ -24,6 +24,7 @@ export class EmployeeMapper {
       status: employee.status,
       hireDate: employee.hireDate.toISOString(),
       areaId: employee.areaId,
+      role: employee.role,
       createdAt: employee.createdAt.toISOString(),
       updatedAt: employee.updatedAt.toISOString(),
     };

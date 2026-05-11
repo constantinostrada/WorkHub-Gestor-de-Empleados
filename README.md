@@ -325,6 +325,76 @@ All routes return `application/json`.
 
 ---
 
+## Role-Based Permissions
+
+WorkHub gates mutation endpoints behind a three-tier role model. The role of
+the caller is carried via a JWT-stub `X-Role` HTTP header (intended to be
+replaced by a real JWT claim in the future) — the value MUST be one of
+`admin`, `manager`, or `employee`. Every employee record also persists a
+`role` column (default `employee`), so the same vocabulary is used end-to-end.
+
+### Roles
+
+| Role       | Granted access                                                       |
+|------------|----------------------------------------------------------------------|
+| `admin`    | Everything: full CRUD on employees, areas, vacations, reports, audit |
+| `manager`  | Areas / vacations / reports (but **not** employee CRUD or audit)     |
+| `employee` | Read-only access to non-gated endpoints                              |
+
+### Endpoint matrix
+
+| Method · Endpoint                          | Required role(s)    |
+|--------------------------------------------|---------------------|
+| `POST   /api/employees`                    | `admin`             |
+| `PATCH  /api/employees/:id`                | `admin`             |
+| `DELETE /api/employees/:id`                | `admin`             |
+| `POST   /api/areas`                        | `admin` · `manager` |
+| `POST   /api/vacations`                    | `admin` · `manager` |
+| `POST   /api/vacations/:id/approve`        | `admin` · `manager` |
+| `POST   /api/vacations/:id/reject`         | `admin` · `manager` |
+| `GET    /api/audit`                        | `admin`             |
+| `GET    /api/reports/hours-by-area`        | `admin` · `manager` |
+| `GET    /api/reports/vacations-summary`    | `admin` · `manager` |
+| `GET    /api/reports/employee/:id/monthly` | `admin` · `manager` |
+
+Endpoints not listed above (e.g. `GET /api/employees`, `GET /api/areas`,
+`POST /api/time-entries`, `GET /api/vacations/calendar`, `GET /api/health`)
+are intentionally not role-gated yet.
+
+### 403 response shape
+
+When the caller's role is missing or not in the allow-list, the server
+returns HTTP `403` with the following JSON body:
+
+```json
+{
+  "error": "forbidden",
+  "required_roles": ["admin"],
+  "your_role": "employee"
+}
+```
+
+`your_role` is `null` when the `X-Role` header was missing, empty, or held
+an unrecognised value.
+
+### Applying the middleware
+
+Route handlers wrap themselves with the `withRole(allowedRoles)` HOC from
+`src/interfaces/http/helpers/withRole.ts`:
+
+```ts
+import { withRole } from '@/interfaces/http/helpers/withRole';
+
+export const POST = withRole(['admin'])(async (request) => {
+  // …handler body — guaranteed to only run when X-Role ∈ ['admin']
+});
+```
+
+The wrapper is transparent to Next.js dynamic-segment context (it forwards
+the second `{ params }` argument untouched).
+
+---
+
 ## Testing
 
 ```bash
