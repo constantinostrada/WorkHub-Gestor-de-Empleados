@@ -50,8 +50,13 @@ export async function GET(request: NextRequest): Promise<Response> {
       return handleError(new Error(parsed.error.message));
     }
 
+    // T13 AC-5/AC-6: offboarded employees are hidden by default.
+    // Caller opts in via ?include=offboarded.
+    const includeOffboarded = searchParams.get('include') === 'offboarded';
+
     const result = await container.listEmployees.execute({
       ...(parsed.data.area_id !== undefined ? { areaId: parsed.data.area_id } : {}),
+      includeOffboarded,
     });
     return successResponse(result);
   } catch (err) {

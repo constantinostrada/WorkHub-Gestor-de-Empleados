@@ -45,7 +45,7 @@ export class HoursByAreaReportUseCase {
     const areas = await this.areaRepository.findAll();
 
     const employeesPage = await this.employeeRepository.findAll(
-      {},
+      { includeOffboarded: query.includeOffboarded ?? false },
       { page: 1, pageSize: 10000 },
     );
     const employees = employeesPage.items;

@@ -38,6 +38,7 @@ type EmployeeRow = {
   hireDate: Date;
   areaId: string | null;
   role: string;
+  offboardedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -63,6 +64,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       hireDate: row.hireDate,
       areaId: row.areaId,
       role: roleValue,
+      offboardedAt: row.offboardedAt,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     });
@@ -80,6 +82,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       status: employee.status,
       role: employee.role,
       hireDate: employee.hireDate,
+      offboardedAt: employee.offboardedAt,
       ...(employee.areaId
         ? { area: { connect: { id: employee.areaId } } }
         : {}),
@@ -95,6 +98,7 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
       salary: employee.salary.amount,
       status: employee.status,
       role: employee.role,
+      offboardedAt: employee.offboardedAt,
       area: employee.areaId
         ? { connect: { id: employee.areaId } }
         : { disconnect: true },
@@ -133,6 +137,9 @@ export class PrismaEmployeeRepository implements IEmployeeRepository {
         { lastName:  { contains: term, mode: 'insensitive' } },
         { email:     { contains: term, mode: 'insensitive' } },
       ];
+    }
+    if (!filter.includeOffboarded) {
+      where.offboardedAt = null;
     }
 
     const skip = (pagination.page - 1) * pagination.pageSize;

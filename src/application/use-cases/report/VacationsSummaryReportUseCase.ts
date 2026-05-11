@@ -39,7 +39,7 @@ export class VacationsSummaryReportUseCase {
     const yearEnd = new Date(Date.UTC(year, 11, 31));
 
     const employeesPage = await this.employeeRepository.findAll(
-      {},
+      { includeOffboarded: query.includeOffboarded ?? false },
       { page: 1, pageSize: 10000 },
     );
     const employees = employeesPage.items;
