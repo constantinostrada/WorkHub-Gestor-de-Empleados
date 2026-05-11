@@ -82,11 +82,12 @@ describe('T11 — Vacation cancellation', () => {
       const now = new Date('2027-02-20T10:00:00Z');
       const result = await useCase.execute({ vacationId: 'vac-success', now });
 
-      expect(result).toEqual({
+      expect(result.vacation).toEqual({
         id: 'vac-success',
         status: 'cancelled',
         cancelled_at: now.toISOString(),
       });
+      expect(result.vacation_status_before).toBe('PENDING');
       // Entity in repo reflects the transition.
       const stored = repo.store.get('vac-success');
       expect(stored?.status).toBe('CANCELLED');
@@ -107,7 +108,8 @@ describe('T11 — Vacation cancellation', () => {
       const now = new Date('2027-02-20T10:00:00Z');
       const result = await useCase.execute({ vacationId: 'vac-approved', now });
 
-      expect(result.status).toBe('cancelled');
+      expect(result.vacation.status).toBe('cancelled');
+      expect(result.vacation_status_before).toBe('APPROVED');
       expect(repo.store.get('vac-approved')?.status).toBe('CANCELLED');
     });
   });

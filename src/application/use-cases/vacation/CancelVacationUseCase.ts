@@ -15,7 +15,10 @@
  * minimal `{ id, status, cancelled_at }` response described by T11 AC-6.
  */
 
-import type { CancelVacationResponseDto } from '@/application/dtos/vacation.dto';
+import type {
+  CancelVacationResponseDto,
+  CancelVacationResult,
+} from '@/application/dtos/vacation.dto';
 import { DomainNotFoundError } from '@/domain/errors/DomainNotFoundError';
 import type { IVacationRepository } from '@/domain/repositories/IVacationRepository';
 
@@ -27,11 +30,15 @@ export interface CancelVacationDto {
 export class CancelVacationUseCase {
   constructor(private readonly vacationRepo: IVacationRepository) {}
 
-  async execute(dto: CancelVacationDto): Promise<CancelVacationResponseDto> {
+  async execute(dto: CancelVacationDto): Promise<CancelVacationResult> {
     const vacation = await this.vacationRepo.findById(dto.vacationId);
     if (!vacation) {
       throw new DomainNotFoundError('Vacation', dto.vacationId);
     }
+
+    // Capture status BEFORE the state transition so that T12 audit-trail
+    // wiring can record what the vacation looked like prior to cancellation.
+    const vacationStatusBefore = vacation.status;
 
     vacation.cancel(dto.now);
     await this.vacationRepo.save(vacation);
@@ -42,10 +49,15 @@ export class CancelVacationUseCase {
       throw new Error('Vacation.cancelledAt missing after cancel().');
     }
 
-    return {
+    const vacationDto: CancelVacationResponseDto = {
       id: vacation.id,
       status: 'cancelled',
       cancelled_at: cancelledAt.toISOString(),
+    };
+
+    return {
+      vacation: vacationDto,
+      vacation_status_before: vacationStatusBefore,
     };
   }
 }
