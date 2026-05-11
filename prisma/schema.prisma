@@ -47,6 +47,7 @@ model Employee {
   status    EmployeeStatus @default(ACTIVE)
   hireDate  DateTime       @map("hire_date")
   areaId    String?        @map("area_id")
+  role      EmployeeRole   @default(employee)
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @updatedAt       @map("updated_at")
 
@@ -85,6 +86,14 @@ enum EmployeeStatus {
   ON_LEAVE
 
   @@map("employee_status")
+}
+
+enum EmployeeRole {
+  admin
+  manager
+  employee
+
+  @@map("employee_role")
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

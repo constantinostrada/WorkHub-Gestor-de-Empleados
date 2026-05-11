@@ -8,6 +8,7 @@
 import type { Email } from '../value-objects/Email';
 import type { Money } from '../value-objects/Money';
 import { EmployeeStatus } from '../value-objects/EmployeeStatus';
+import { DEFAULT_ROLE, isValidRole, type Role } from '../value-objects/Role';
 import { DomainValidationError } from '../errors/DomainValidationError';
 
 export interface EmployeeProps {
@@ -21,6 +22,7 @@ export interface EmployeeProps {
   status: EmployeeStatus;
   hireDate: Date;
   areaId: string | null;
+  role: Role;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,6 +54,13 @@ export class Employee {
     if (props.hireDate > new Date()) {
       throw new DomainValidationError('Hire date cannot be in the future.');
     }
+    if (!isValidRole(props.role)) {
+      throw new DomainValidationError(`Invalid employee role: "${String(props.role)}".`);
+    }
+  }
+
+  static defaultRole(): Role {
+    return DEFAULT_ROLE;
   }
 
   // ── Getters ────────────────────────────────────────────────────────────────
@@ -66,6 +75,7 @@ export class Employee {
   get status(): EmployeeStatus { return this.props.status; }
   get hireDate(): Date { return this.props.hireDate; }
   get areaId(): string | null { return this.props.areaId; }
+  get role(): Role { return this.props.role; }
   get createdAt(): Date { return this.props.createdAt; }
   get updatedAt(): Date { return this.props.updatedAt; }
 

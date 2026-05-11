@@ -16,8 +16,9 @@ import { type NextRequest } from 'next/server';
 import type { ListAuditLogsDto } from '@/application/dtos/audit.dto';
 import { container } from '@/infrastructure/container/container';
 import { handleError, successResponse } from '@/interfaces/http/helpers/apiResponse';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 
-export async function GET(request: NextRequest): Promise<Response> {
+export const GET = withRole(['admin'])(async (request: NextRequest): Promise<Response> => {
   try {
     const { searchParams } = request.nextUrl;
     const dto: ListAuditLogsDto = {};
@@ -48,4 +49,4 @@ export async function GET(request: NextRequest): Promise<Response> {
   } catch (err) {
     return handleError(err);
   }
-}
+});

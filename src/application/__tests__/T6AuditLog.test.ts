@@ -152,6 +152,7 @@ function makeEmployee(id: string, email: string): Employee {
     status: EmployeeStatus.ACTIVE,
     hireDate: now,
     areaId: null,
+    role: 'employee',
     createdAt: now,
     updatedAt: now,
   });
@@ -229,8 +230,8 @@ describe('AC-1 · POST routes write audit_logs rows', () => {
     const { POST } = await import('@/app/api/employees/route');
     const before = Date.now();
     const res = await POST(makeRequest({
-      body: { name: 'Jane Smith', email: 'jane@example.com', role: 'engineer' },
-      headers: { 'x-actor-id': ACTOR_ID },
+      body: { name: 'Jane Smith', email: 'jane@example.com', role: 'employee' },
+      headers: { 'x-actor-id': ACTOR_ID, 'x-role': 'admin' },
     }));
     expect(res.status).toBe(201);
 
@@ -240,7 +241,7 @@ describe('AC-1 · POST routes write audit_logs rows', () => {
     expect(log.action).toBe<AuditAction>('create');
     expect(log.resourceType).toBe('employee');
     expect(log.resourceId).toBeTruthy();
-    expect(log.detailsJson).toMatchObject({ name: 'Jane Smith', email: 'jane@example.com', role: 'engineer' });
+    expect(log.detailsJson).toMatchObject({ name: 'Jane Smith', email: 'jane@example.com', role: 'employee' });
     expect(log.createdAt.getTime()).toBeGreaterThanOrEqual(before);
   });
 
@@ -248,7 +249,7 @@ describe('AC-1 · POST routes write audit_logs rows', () => {
     const { POST } = await import('@/app/api/areas/route');
     const res = await POST(makeRequest({
       body: { name: 'Engineering' },
-      headers: { 'x-actor-id': ACTOR_ID },
+      headers: { 'x-actor-id': ACTOR_ID, 'x-role': 'admin' },
     }));
     expect(res.status).toBe(201);
     expect(fakeAuditRepo.store).toHaveLength(1);
@@ -282,7 +283,7 @@ describe('AC-1 · POST routes write audit_logs rows', () => {
     const { POST } = await import('@/app/api/vacations/route');
     const res = await POST(makeRequest({
       body: { employee_id: SUBJECT_EMP_ID, start_date: '2025-08-01', end_date: '2025-08-05' },
-      headers: { 'x-actor-id': ACTOR_ID },
+      headers: { 'x-actor-id': ACTOR_ID, 'x-role': 'manager' },
     }));
     expect(res.status).toBe(201);
     expect(fakeAuditRepo.store).toHaveLength(1);
@@ -299,7 +300,7 @@ describe('AC-1 · POST routes write audit_logs rows', () => {
 
   it('AC-1e · missing X-Actor-Id falls back to actor_id=null but still writes the row', async () => {
     const { POST } = await import('@/app/api/areas/route');
-    const res = await POST(makeRequest({ body: { name: 'Operations' } }));
+    const res = await POST(makeRequest({ body: { name: 'Operations' }, headers: { 'x-role': 'admin' } }));
     expect(res.status).toBe(201);
     expect(fakeAuditRepo.store).toHaveLength(1);
     expect(fakeAuditRepo.store[0]!.actorId).toBeNull();

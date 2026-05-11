@@ -13,15 +13,16 @@ import {
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
 import { recordAuditEntry } from '@/interfaces/http/helpers/auditLog';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 
 const rejectSchema = z
   .object({ reason: z.string().optional() })
   .strict();
 
-export async function POST(
+export const POST = withRole(['admin', 'manager'])(async (
   request: NextRequest,
   { params }: { params: { id: string } },
-): Promise<Response> {
+): Promise<Response> => {
   try {
     let reason: string | undefined;
     const text = await request.text();
@@ -56,4 +57,4 @@ export async function POST(
   } catch (err) {
     return handleError(err);
   }
-}
+});

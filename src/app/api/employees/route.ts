@@ -16,6 +16,7 @@ import {
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
 import { recordAuditEntry } from '@/interfaces/http/helpers/auditLog';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 import {
   apiCreateEmployeeSchema,
   apiListEmployeesSchema,
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest): Promise<Response> {
   }
 }
 
-export async function POST(request: NextRequest): Promise<Response> {
+export const POST = withRole(['admin'])(async (request: NextRequest): Promise<Response> => {
   try {
     const body: unknown = await request.json();
     const parsed = apiCreateEmployeeSchema.safeParse(body);
@@ -80,6 +81,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       salary: 0.01,                         // Money requires a positive amount
       hireDate: new Date().toISOString(),
       areaId: null,                         // AC-1: created without an area
+      role,
     };
 
     const result = await container.createEmployee.execute(dto);
@@ -93,4 +95,4 @@ export async function POST(request: NextRequest): Promise<Response> {
   } catch (err) {
     return handleError(err);
   }
-}
+});

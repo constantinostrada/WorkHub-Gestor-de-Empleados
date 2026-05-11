@@ -13,6 +13,7 @@ import {
   handleError,
 } from '@/interfaces/http/helpers/apiResponse';
 import { recordAuditEntry } from '@/interfaces/http/helpers/auditLog';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 
 const apiCreateVacationSchema = z.object({
   employee_id: z.string().min(1),
@@ -21,7 +22,7 @@ const apiCreateVacationSchema = z.object({
   reason: z.string().optional(),
 }).strict();
 
-export async function POST(request: NextRequest): Promise<Response> {
+export const POST = withRole(['admin', 'manager'])(async (request: NextRequest): Promise<Response> => {
   try {
     const body: unknown = await request.json();
     const parsed = apiCreateVacationSchema.safeParse(body);
@@ -52,4 +53,4 @@ export async function POST(request: NextRequest): Promise<Response> {
   } catch (err) {
     return handleError(err);
   }
-}
+});

@@ -132,6 +132,7 @@ function seedEmployee(repo: FakeEmployeeRepository, id: string = EMP_ID): Employ
     status: EmployeeStatus.ACTIVE,
     hireDate: now,
     areaId: null,
+    role: 'employee',
     createdAt: now,
     updatedAt: now,
   });

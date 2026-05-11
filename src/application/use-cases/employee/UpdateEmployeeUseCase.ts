@@ -57,6 +57,7 @@ export class UpdateEmployeeUseCase {
       status: updatedStatus,
       hireDate: existing.hireDate,  // hire date is immutable
       areaId: dto.areaId !== undefined ? dto.areaId : existing.areaId,
+      role: dto.role ?? existing.role,
       createdAt: existing.createdAt,
       updatedAt: new Date(),
     });

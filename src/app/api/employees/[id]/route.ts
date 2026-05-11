@@ -13,6 +13,7 @@ import {
   noContentResponse,
   successResponse,
 } from '@/interfaces/http/helpers/apiResponse';
+import { withRole } from '@/interfaces/http/helpers/withRole';
 import {
   apiAssignAreaSchema,
   updateEmployeeSchema,
@@ -56,10 +57,10 @@ export async function PUT(
   }
 }
 
-export async function PATCH(
+export const PATCH = withRole(['admin'])(async (
   request: NextRequest,
   { params }: RouteContext,
-): Promise<Response> {
+): Promise<Response> => {
   try {
     const body: unknown = await request.json();
     const parsed = updateEmployeeSchema.safeParse(body);
@@ -76,16 +77,16 @@ export async function PATCH(
   } catch (err) {
     return handleError(err);
   }
-}
+});
 
-export async function DELETE(
+export const DELETE = withRole(['admin'])(async (
   _request: NextRequest,
   { params }: RouteContext,
-): Promise<Response> {
+): Promise<Response> => {
   try {
     await container.deleteEmployee.execute({ id: params.id });
     return noContentResponse();
   } catch (err) {
     return handleError(err);
   }
-}
+});
