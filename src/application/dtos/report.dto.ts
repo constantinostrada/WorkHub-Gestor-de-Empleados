@@ -45,3 +45,23 @@ export interface EmployeeMonthlyItemDto {
   hours_worked: number;
   vacation_days: number;
 }
+
+export interface AreaDashboardQuery {
+  areaId: string;
+  from: Date;
+  to: Date;
+}
+
+export interface AreaDashboardTopEmployeeDto {
+  id: string;
+  name: string;
+  hours: number;
+}
+
+export interface AreaDashboardResponseDto {
+  headcount_active: number;
+  total_hours: number;
+  vacation_days: number;
+  avg_approval_hours: number;
+  top_employees: AreaDashboardTopEmployeeDto[];
+}
