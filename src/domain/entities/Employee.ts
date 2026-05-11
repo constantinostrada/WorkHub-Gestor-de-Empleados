@@ -10,6 +10,8 @@ import type { Money } from '../value-objects/Money';
 import { EmployeeStatus } from '../value-objects/EmployeeStatus';
 import { DEFAULT_ROLE, isValidRole, type Role } from '../value-objects/Role';
 import { DomainValidationError } from '../errors/DomainValidationError';
+import { EmployeeOffboardedError } from '../errors/EmployeeOffboardedError';
+import { SameAreaTransferError } from '../errors/SameAreaTransferError';
 
 export interface EmployeeProps {
   id: string;
@@ -89,6 +91,15 @@ export class Employee {
     return this.props.status === EmployeeStatus.ACTIVE;
   }
 
+  /**
+   * Whether this employee should be considered offboarded for write-side
+   * operations (T18 transfer, future cascades). Project main has no
+   * dedicated offboardedAt column yet (T13 unmerged); INACTIVE is the proxy.
+   */
+  get isOffboarded(): boolean {
+    return this.props.status === EmployeeStatus.INACTIVE;
+  }
+
   // ── Domain behaviour ───────────────────────────────────────────────────────
 
   deactivate(): Employee {
@@ -125,8 +136,11 @@ export class Employee {
   }
 
   transferToArea(areaId: string | null): Employee {
+    if (this.isOffboarded) {
+      throw new EmployeeOffboardedError(this.props.id);
+    }
     if (areaId === this.props.areaId) {
-      throw new DomainValidationError('Employee is already in this area.');
+      throw new SameAreaTransferError(this.props.areaId);
     }
     return Employee.create({
       ...this.props,

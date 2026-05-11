@@ -79,3 +79,33 @@ export interface PaginatedEmployeesResponseDto {
   pageSize: number;
   totalPages: number;
 }
+
+// ── Transfer DTOs ─────────────────────────────────────────────────────────
+
+export interface TransferEmployeeDto {
+  employeeId: string;
+  newAreaId: string;
+  effectiveDate: Date;
+}
+
+export interface AffectedVacationDto {
+  id: string;
+  start_date: string;
+  end_date: string;
+  status: string;
+}
+
+export interface AffectedTimeEntryDto {
+  id: string;
+  date: string;
+}
+
+export interface TransferEmployeeResultDto {
+  employee: EmployeeResponseDto;
+  transferred_at: string;
+  transferred_from: string | null;
+  transferred_to: string;
+  effective_date: string;
+  affected_vacations: AffectedVacationDto[];
+  affected_time_entries: AffectedTimeEntryDto[];
+}
