@@ -94,6 +94,7 @@ export class PrismaVacationRepository implements IVacationRepository {
     from: Date,
     to: Date,
     statuses?: VacationStatus[],
+    areaId?: string,
   ): Promise<Vacation[]> {
     const rows = await this.db.vacation.findMany({
       where: {
@@ -102,6 +103,7 @@ export class PrismaVacationRepository implements IVacationRepository {
         ...(statuses && statuses.length > 0
           ? { status: { in: statuses as PrismaVacationStatus[] } }
           : {}),
+        ...(areaId !== undefined ? { employee: { areaId } } : {}),
       },
       orderBy: { startDate: 'asc' },
     });
