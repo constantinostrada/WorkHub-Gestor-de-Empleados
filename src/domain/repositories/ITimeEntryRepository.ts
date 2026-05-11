@@ -5,13 +5,18 @@
  * No ORM types, no SQL, no third-party imports.
  */
 
-import type { TimeEntry } from '../entities/TimeEntry';
+import type { TimeEntry, TimeEntryStatus } from '../entities/TimeEntry';
+
+export interface FindTimeEntriesFilter {
+  status?: TimeEntryStatus;
+  employeeId?: string;
+}
 
 export interface ITimeEntryRepository {
   /**
-   * Persist a new TimeEntry. Implementations must enforce the
-   * (employeeId, date) uniqueness invariant — see findByEmployeeAndDate
-   * for the read-side check the use case performs first.
+   * Persist a TimeEntry — upsert by id. Implementations must enforce the
+   * (employeeId, date) uniqueness invariant on inserts; updates pass through
+   * unconditionally so state transitions (approve/reject) overwrite the row.
    */
   save(entry: TimeEntry): Promise<void>;
 
@@ -23,4 +28,10 @@ export interface ITimeEntryRepository {
    * (inclusive on both ends). Order: ascending by date.
    */
   findByEmployeeInRange(employeeId: string, from: Date, to: Date): Promise<TimeEntry[]>;
+
+  /** Look up a TimeEntry by primary key. */
+  findById(id: string): Promise<TimeEntry | null>;
+
+  /** List all entries, optionally filtered by status/employee. Order: desc by date. */
+  findAll(filter?: FindTimeEntriesFilter): Promise<TimeEntry[]>;
 }

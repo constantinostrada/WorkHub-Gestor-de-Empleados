@@ -60,6 +60,7 @@ export class GetEmployeeMonthlyReportUseCase {
       yearEnd,
     );
     for (const entry of entries) {
+      if (entry.status !== 'APPROVED') continue; // T14 AC-6
       const m = entry.date.getUTCMonth(); // 0-indexed
       items[m]!.hours_worked += entry.hours;
     }

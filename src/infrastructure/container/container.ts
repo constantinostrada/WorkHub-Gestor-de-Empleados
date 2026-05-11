@@ -29,8 +29,11 @@ import { UpdateEmployeeUseCase } from '@/application/use-cases/employee/UpdateEm
 import { GetEmployeeMonthlyReportUseCase } from '@/application/use-cases/report/GetEmployeeMonthlyReportUseCase';
 import { HoursByAreaReportUseCase } from '@/application/use-cases/report/HoursByAreaReportUseCase';
 import { VacationsSummaryReportUseCase } from '@/application/use-cases/report/VacationsSummaryReportUseCase';
+import { ApproveTimeEntryUseCase } from '@/application/use-cases/time-entry/ApproveTimeEntryUseCase';
 import { ListTimeEntriesByEmployeeUseCase } from '@/application/use-cases/time-entry/ListTimeEntriesByEmployeeUseCase';
+import { ListTimeEntriesUseCase } from '@/application/use-cases/time-entry/ListTimeEntriesUseCase';
 import { RegisterTimeEntryUseCase } from '@/application/use-cases/time-entry/RegisterTimeEntryUseCase';
+import { RejectTimeEntryUseCase } from '@/application/use-cases/time-entry/RejectTimeEntryUseCase';
 import { ApproveVacationUseCase } from '@/application/use-cases/vacation/ApproveVacationUseCase';
 import { CancelVacationUseCase } from '@/application/use-cases/vacation/CancelVacationUseCase';
 import { CreateVacationUseCase } from '@/application/use-cases/vacation/CreateVacationUseCase';
@@ -70,6 +73,9 @@ export const container = {
     timeEntryRepository,
     employeeRepository,
   ),
+  listTimeEntries: new ListTimeEntriesUseCase(timeEntryRepository),
+  approveTimeEntry: new ApproveTimeEntryUseCase(timeEntryRepository),
+  rejectTimeEntry: new RejectTimeEntryUseCase(timeEntryRepository),
 
   // Reports
   hoursByAreaReport: new HoursByAreaReportUseCase(

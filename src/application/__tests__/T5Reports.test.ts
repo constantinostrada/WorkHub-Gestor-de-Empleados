@@ -135,6 +135,19 @@ class FakeTimeEntryRepository implements ITimeEntryRepository {
       })
       .sort((a, b) => a.date.getTime() - b.date.getTime());
   }
+  async findById(id: string): Promise<TimeEntry | null> {
+    for (const e of this.store.values()) if (e.id === id) return e;
+    return null;
+  }
+  async findAll(
+    filter: { status?: TimeEntry['status']; employeeId?: string } = {},
+  ): Promise<TimeEntry[]> {
+    return [...this.store.values()].filter((e) => {
+      if (filter.status !== undefined && e.status !== filter.status) return false;
+      if (filter.employeeId !== undefined && e.employeeId !== filter.employeeId) return false;
+      return true;
+    });
+  }
 }
 
 class FakeVacationRepository implements IVacationRepository {
@@ -211,6 +224,7 @@ function makeTimeEntry(id: string, employeeId: string, isoDate: string, hours: n
     date: new Date(`${isoDate}T00:00:00Z`),
     hours,
     notes: null,
+    status: 'APPROVED', // T14: reports only count APPROVED entries
     createdAt: created,
     updatedAt: created,
   });

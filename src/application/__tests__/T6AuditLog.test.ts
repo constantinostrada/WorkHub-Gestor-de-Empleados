@@ -120,6 +120,11 @@ class FakeTimeEntryRepository implements ITimeEntryRepository {
     return this.store.get(FakeTimeEntryRepository.dayKey(eid, d)) ?? null;
   }
   async findByEmployeeInRange(): Promise<TimeEntry[]> { return []; }
+  async findById(id: string): Promise<TimeEntry | null> {
+    for (const t of this.store.values()) if (t.id === id) return t;
+    return null;
+  }
+  async findAll(): Promise<TimeEntry[]> { return [...this.store.values()]; }
 }
 
 class FakeVacationRepository implements IVacationRepository {

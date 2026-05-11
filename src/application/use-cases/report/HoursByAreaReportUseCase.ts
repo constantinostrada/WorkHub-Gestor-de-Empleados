@@ -71,6 +71,7 @@ export class HoursByAreaReportUseCase {
           to,
         );
         for (const e of entries) {
+          if (e.status !== 'APPROVED') continue; // T14 AC-6
           totalHours += e.hours;
         }
       }

@@ -65,19 +65,34 @@ model Employee {
 // TimeEntry — daily worked-hours record per employee
 // ─────────────────────────────────────────────────────────────────────────────
 model TimeEntry {
-  id         String   @id @default(uuid())
-  employeeId String   @map("employee_id")
-  date       DateTime @db.Date
-  hours      Decimal  @db.Decimal(4, 2)
-  notes      String?
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt       @map("updated_at")
+  id              String           @id @default(uuid())
+  employeeId      String           @map("employee_id")
+  date            DateTime         @db.Date
+  hours           Decimal          @db.Decimal(4, 2)
+  notes           String?
+  status          TimeEntryStatus  @default(PENDING)
+  approvedAt      DateTime?        @map("approved_at")
+  approvedBy      String?          @map("approved_by")
+  rejectedAt      DateTime?        @map("rejected_at")
+  rejectedBy      String?          @map("rejected_by")
+  rejectionReason String?          @map("rejection_reason")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt       @map("updated_at")
 
   employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   @@unique([employeeId, date])
   @@index([employeeId, date])
+  @@index([status])
   @@map("time_entries")
+}
+
+enum TimeEntryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("time_entry_status")
 }
 
 enum EmployeeStatus {
